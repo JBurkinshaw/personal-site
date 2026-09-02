@@ -14,16 +14,19 @@ The approach: a bare Astro `minimal` scaffold producing one static page with zer
 deployed by `withastro/action` on push to `main`. Content is separated from presentation from the
 first commit, as frontmatter in a single Markdown file validated at build time by the Zod that Astro
 already bundles, so later phases are content edits rather than refactors. The design system ships as
-a token sheet in Phase 1 with composition deferred to Phase 2. The domain cutover is three ordered
+a token sheet in Stage 1 with composition deferred to Stage 2. The domain cutover is three ordered
 manual steps that only the owner can perform.
 
-**Phasing**, with every task in `tasks.md` to carry its phase marker:
+**Build stages**, with every task in `tasks.md` carrying its stage marker. "Stage" is deliberately
+distinct from two other numbered things in this project: Spec Kit's own Phase 0 and Phase 1 planning
+phases, and the task phases in `tasks.md`. Story priorities in `spec.md` remain `P1` to `P4` and are
+unrelated to stages.
 
-| Phase | Deliverable | Acceptance |
+| Stage | Deliverable | Acceptance |
 |---|---|---|
-| **P1** | Scaffold, token sheet, provisional page, CI deploy, domain cutover | SC-006, SC-007, SC-009 |
-| **P2** | Final composition, photograph pipeline, budget enforcement | SC-002, SC-005, and the byte budgets |
-| **P3** | Real bio, real photograph, verified links | SC-001, SC-003, SC-004, SC-010 |
+| **S1** | Scaffold, token sheet, provisional page, CI deploy with budget enforcement, domain cutover | SC-006, SC-007, SC-009 |
+| **S2** | Final composition and photograph pipeline | SC-002, SC-005, and the byte budgets |
+| **S3** | Real bio, real photograph, verified links | SC-001, SC-003, SC-004, SC-010 |
 
 ## Technical Context
 
@@ -37,7 +40,7 @@ which `astro` does not bundle, plus `prettier` and `prettier-plugin-astro`. Zod 
 and cannot skew from Astro's own copy.
 
 **Storage**: None. All content is two files in the repository: frontmatter in `src/data/site.md`
-and, from Phase 3, one image in `src/assets/`. No database, no API, no runtime data fetching.
+and, from Stage 3, one image in `src/assets/`. No database, no API, no runtime data fetching.
 
 **Testing**: No unit test framework, and none is warranted. A single static page has no units to
 test in isolation. Correctness is enforced at build time instead, by three mechanisms: `astro check`
@@ -69,13 +72,13 @@ anticipated within this feature.
 
 | Principle | Gate | Verdict |
 |---|---|---|
-| I. Simplicity Is The Requirement | No content collections, no dynamic routes, no abstraction with a single caller, no schema for content that does not exist | **PASS.** Collections and routing are excluded from all three phases. `src/lib/site.ts` has one caller but is data loading rather than abstraction, and exists because FR-011 requires the separation. The Phase 3 schema covers only fields that will actually be populated. |
+| I. Simplicity Is The Requirement | No content collections, no dynamic routes, no abstraction with a single caller, no schema for content that does not exist | **PASS.** Collections and routing are excluded from all three phases. `src/lib/site.ts` has one caller but is data loading rather than abstraction, and exists because FR-011 requires the separation. The Stage 3 schema covers only fields that will actually be populated. |
 | II. Zero JavaScript By Default | 0 bytes shipped; no third-party origins | **PASS.** No islands, no `client:` directives, no inline script. Theming is `prefers-color-scheme` and `light-dark()` with no toggle. All assets are self-hosted, so FR-010 holds and no consent notice is needed. |
-| III. Platform Over Packages | Production dependencies empty beyond `astro`; every dev dependency justified | **PASS with a recorded departure.** Two dev dependencies are justified in `research.md`. ESLint is deliberately omitted; see Complexity Tracking. |
+| III. Platform Over Packages | Production dependencies empty beyond `astro`; every dev dependency justified | **PASS.** Four dev dependencies, each justified in `research.md` section 5. No dedicated linter, which constitution v1.0.1 permits provided the decision is recorded; research.md section 5 records it. |
 | IV. Publish By Push | One push publishes; clean-clone buildable; failing build blocks deploy; manual steps recorded as owner tasks | **PASS.** `npm ci && npm run build` from a clean clone, no secrets. The workflow's build step gates the deploy step. The three cutover steps are one-time infrastructure, explicitly recorded as owner tasks per this principle's own clause rather than hidden. |
 | V. Content Is Editable Without Reading Code | Content in data or Markdown with typed frontmatter; browser-editable; malformed edit fails the build | **PASS.** One Markdown file, frontmatter only, no code. `safeParse` failure exits non-zero with the offending field named, satisfying FR-013. Adding a link is one list entry, satisfying FR-012. |
-| VI. Restraint Is The Design | Tokens only, near-monochrome, no ornament, reduced-motion honoured | **PARTIAL BY DESIGN.** Phase 1 ships the token sheet; composition is Phase 2, so this principle is only fully assessable at Phase 2 exit. Phase 1's provisional page is still bound by it: no ornament, no motion, tokens only. |
-| VII. Quality Is Measured, Not Asserted | Numeric budgets, accessibility floor, type and build gate, all CI-enforced | **PASS with a recorded departure.** Byte budgets and the type and build gates run in CI from Phase 1. Lighthouse is not automated; see Complexity Tracking. |
+| VI. Restraint Is The Design | Tokens only, near-monochrome, no ornament, reduced-motion honoured | **PARTIAL BY DESIGN.** Stage 1 ships the token sheet; composition is Stage 2, so this principle is only fully assessable at Stage 2 exit. Stage 1's provisional page is still bound by it: no ornament, no motion, tokens only. |
+| VII. Quality Is Measured, Not Asserted | Numeric budgets, accessibility floor, type and build gate, all CI-enforced | **PASS with a recorded departure.** Byte budgets and the type and build gates run in CI from Stage 1. Lighthouse is not automated; see Complexity Tracking. |
 
 **Post-design re-check (after Phase 1 artifacts):** no verdict changed. The design added no
 dependency, no client JavaScript, and no abstraction beyond the single data module already accounted
@@ -103,38 +106,38 @@ specs/001-single-page-site/
 ### Source Code (repository root)
 
 ```text
-astro.config.mjs                 # P1  site, no base, inlineStylesheets: 'always'
-package.json                     # P1  astro only in dependencies
-tsconfig.json                    # P1  extends astro/tsconfigs/strict
-.nvmrc                           # P1  22.16.0, single source of truth for Node
-.prettierrc                      # P1  with prettier-plugin-astro
+astro.config.mjs                 # S1  site, no base, inlineStylesheets: 'always'
+package.json                     # S1  astro only in dependencies
+tsconfig.json                    # S1  extends astro/tsconfigs/strict
+.nvmrc                           # S1  22.16.0, single source of truth for Node
+.prettierrc                      # S1  with prettier-plugin-astro
 .gitignore                       # exists
 
 public/
-├── CNAME                        # P1  joeburkinshaw.com
-└── favicon.svg                  # P1
+├── CNAME                        # S1  joeburkinshaw.com
+└── favicon.svg                  # S1
 
 src/
 ├── data/
-│   └── site.md                  # P1  the only file the owner edits
+│   └── site.md                  # S1  the only file the owner edits
 ├── lib/
-│   └── site.ts                  # P1  imports site.md, validates via astro/zod
+│   └── site.ts                  # S1  imports site.md, validates via astro/zod
 ├── layouts/
-│   └── Base.astro               # P1  html shell, meta, canonical, OG, Twitter card
+│   └── Base.astro               # S1  html shell, meta, canonical, OG, Twitter card
 ├── pages/
-│   └── index.astro              # P1  provisional; P2 final composition
+│   └── index.astro              # S1  provisional; S2 final composition
 ├── styles/
-│   └── global.css               # P1  reset plus the full token set
+│   └── global.css               # S1  reset plus the full token set
 └── assets/
-    └── joe.jpg                  # P3  photograph, via astro:assets
+    └── joe.jpg                  # S3  photograph, via astro:assets
 
 scripts/
-└── check-budgets.mjs            # P1  node builtins only, no dependency
+└── check-budgets.mjs            # S1  node builtins only, no dependency
 
 .github/workflows/
-└── deploy.yml                   # P1  two jobs: build then deploy-pages
+└── deploy.yml                   # S1  two jobs: build then deploy-pages
 
-README.md                        # P1  under 20 lines
+README.md                        # S1  under 20 lines
 ```
 
 **Structure Decision**: Flat single-project layout, which is the Astro convention and the smallest
@@ -145,9 +148,13 @@ edit in FR-013 fail loudly at build time. No `tests/` directory, for the reason 
 
 ## Complexity Tracking
 
-> Two deliberate departures from the constitution, recorded per its Governance clause.
+> One deliberate departure from the constitution, recorded per its Governance clause.
+>
+> A second entry, the omission of ESLint, was removed when constitution v1.0.1 amended the
+> Development Workflow to require type check, build and format rather than naming lint as a
+> mandatory gate. It is no longer a departure. The reasoning is retained in research.md section 5,
+> which is where the amendment requires the linter decision to be recorded.
 
 | Violation | Why Needed | Simpler Alternative Rejected Because |
 |-----------|------------|-------------------------------------|
-| ESLint omitted, despite the constitution's Development Workflow naming "lint" as a blocking check | The lintable surface is close to empty. There is zero client JavaScript, one page, and `strict` TypeScript. `astro check` already reports unused variables, unreachable code, type errors and template diagnostics, which is most of what a flat ESLint config would catch here. Adding ESLint means four dev dependencies and a config to maintain for near-zero marginal signal, which is exactly what Principle III exists to prevent. | Adding ESLint was rejected as cost without benefit at this scale. **To remove this exception:** add ESLint the moment any client-side JavaScript is introduced under Principle II's exception process, or when a second contributor joins and shared conventions stop being implicit. |
-| Lighthouse budgets not enforced in CI, despite Principle VII requiring gates be "enforced by CI rather than remembered" | Automating Lighthouse means a headless Chrome download on every run and a heavy dev dependency, to audit a single static page. The numeric parts that actually regress silently, being JavaScript bytes and CSS weight, are enforced from Phase 1 by `scripts/check-budgets.mjs` using Node builtins only. Lighthouse is run manually at Phase 2 and Phase 3 exit and the scores recorded in the task list. | A CI Lighthouse run was rejected on dependency cost. Fully manual verification was also rejected, because the byte budgets are precisely the thing a human forgets. **To remove this exception:** automate Lighthouse when the site grows past one page, or if a manual audit ever finds a regression the byte check missed. |
+| Lighthouse budgets not enforced in CI, despite Principle VII requiring gates be "enforced by CI rather than remembered" | Automating Lighthouse means a headless Chrome download on every run and a heavy dev dependency, to audit a single static page. The numeric parts that actually regress silently, being JavaScript bytes and CSS weight, are enforced from Stage 1 by `scripts/check-budgets.mjs` using Node builtins only. Lighthouse is run manually at Stage 2 and Stage 3 exit and the scores recorded in the task list. | A CI Lighthouse run was rejected on dependency cost. Fully manual verification was also rejected, because the byte budgets are precisely the thing a human forgets. **To remove this exception:** automate Lighthouse when the site grows past one page, or if a manual audit ever finds a regression the byte check missed. |

@@ -20,6 +20,14 @@ not written yet.
 - **[Story]**: US1, US2, US3, US4 per spec.md
 - **OWNER**: requires account access no agent has. Cannot be automated.
 
+## Three numbered things, kept distinct
+
+- **Phase 1 to 7**: the task phases in this file. They are the execution order.
+- **Stage S1 to S3**: the build stages defined in plan.md. S1 is scaffold, tokens, provisional page
+  and cutover; S2 is composition; S3 is real content. Each story header names its stage.
+- **Priority P1 to P4**: story priority from spec.md, where P1 is US1. Priority is not delivery
+  order, which is why the story phases below run US2 first.
+
 ## Path Conventions
 
 Single project, flat, at repository root per plan.md. Source in `src/`, no `tests/` directory.
@@ -32,7 +40,7 @@ Single project, flat, at repository root per plan.md. Source in `src/`, no `test
 
 - [ ] T001 Scaffold the bare Astro `minimal` starter into the repository root with `npm create astro@latest . -- --template minimal --no-git --skip-houston`, accepting the prompt warning that the directory is not empty, then confirm `.gitignore`, `PROJECT-BRIEF.md`, `.specify/` and `specs/` all survived unmodified
 - [ ] T002 Create `.nvmrc` containing `22.16.0` as the single source of truth for the Node version, matched by CI
-- [ ] T003 Set `package.json` scripts: `dev`, `build` (`astro build`), `build:ci` (`prettier --check . && astro check && astro build && node scripts/check-budgets.mjs`), `check` (same gates without the build), and `preview`
+- [ ] T003 Set `package.json` scripts: `dev`, `build` (`astro build`), `build:ci` (`prettier --check . && astro check && astro build && node scripts/check-budgets.mjs`), `check` (`prettier --check . && astro check`, no build and no budgets, so it runs on a clean tree), `budgets` (`node scripts/check-budgets.mjs`, requires a prior build), and `preview`
 - [ ] T004 Point `tsconfig.json` at `astro/tsconfigs/strict` per plan.md's strict-mode requirement
 - [ ] T005 [P] Add dev dependencies `@astrojs/check` and `typescript`, both required by `astro check` and neither bundled with `astro`, per research.md section 5
 - [ ] T006 [P] Add dev dependencies `prettier` and `prettier-plugin-astro`, and create `.prettierrc` registering the plugin
@@ -54,14 +62,14 @@ user story depends on all of it.
 - [ ] T010 Create `src/styles/global.css` with a minimal reset and `color-scheme: light dark` on `:root`
 - [ ] T011 Add the colour tokens to `src/styles/global.css` as four values only (ink, paper, mid-grey secondary, one accent), each declared **twice**: a plain light-mode value first, then the same custom property redeclared with `light-dark()`, per research.md section 2. Verify WCAG AA contrast for both appearances at this point, not later
 - [ ] T012 Add the spacing scale and the type scale to `src/styles/global.css`, both derived from a single base unit, at most four sizes and two weights, using a system font stack with no `@font-face` and no network request (Principle VI)
-- [ ] T013 [P] Create `src/data/site.md` with the Phase 1 frontmatter shape from contracts/content-schema.md: `name`, `title`, `description`, `provisional: true`, and an empty body. Note the path is `src/data/`, deliberately not `src/content/`, to stay clear of content-collection conventions
-- [ ] T014 Create `src/lib/site.ts` importing `src/data/site.md` as a plain Markdown module, importing `z` from `astro/zod`, and defining the Phase 1 schema: non-empty trimmed `name`, `title`, `description` at most 160 characters, optional boolean `provisional`. Include only fields that exist at this phase (Principle I)
+- [ ] T013 [P] Create `src/data/site.md` with the Stage 1 frontmatter shape from contracts/content-schema.md: `name`, `title`, `description`, `provisional: true`, and an empty body. Note the path is `src/data/`, deliberately not `src/content/`, to stay clear of content-collection conventions
+- [ ] T014 Create `src/lib/site.ts` importing `src/data/site.md` as a plain Markdown module, importing `z` from `astro/zod`, and defining the Stage 1 schema: non-empty trimmed `name`, `title`, `description` at most 160 characters, optional boolean `provisional`. Include only fields that exist at this stage (Principle I)
 - [ ] T015 In `src/lib/site.ts`, run `safeParse` at module scope and `throw` on failure with a message naming the offending field and what was expected, so the failure surfaces during `astro build` and satisfies FR-013. Export the parsed result as separately typed `profile` and `metadata` values per data-model.md
 - [ ] T016 [P] Create `public/favicon.svg`, monochrome and consistent with the token palette
 - [ ] T017 Create `src/layouts/Base.astro` with the html shell, `lang`, viewport, a `<title>` and meta description from `metadata`, a canonical URL derived from `Astro.site` rather than hand-written, Open Graph and Twitter card tags, the favicon link, and a `global.css` import. No client-side script of any kind
 - [ ] T018 [P] Create `scripts/check-budgets.mjs` using Node builtins only. It must walk `dist/` and exit non-zero if any `.js` or `.mjs` file is emitted, if HTML plus CSS exceeds 20KB uncompressed, if any single image exceeds 150KB, or if total output exceeds 250KB. Print the measured totals on success so the numbers are visible in CI logs
 - [ ] T019 Create `.github/workflows/deploy.yml` with the two-job shape from contracts/deployment.md: a `build` job running `actions/checkout@v7` then `withastro/action@v6` with `node-version: 22.16.0` and `build-cmd: npm run build:ci`, and a separate `deploy` job with `needs: build` running `actions/deploy-pages@v5` with `id: deployment`. `withastro/action` only uploads a Pages artifact; it does not deploy
-- [ ] T020 Add to `.github/workflows/deploy.yml` the `permissions` block (`contents: read`, `pages: write`, `id-token: write`), the `github-pages` environment on the deploy job, a `concurrency` group of `pages` with `cancel-in-progress: false`, and triggers on push to `main` plus `workflow_dispatch`
+- [ ] T020 Add to `.github/workflows/deploy.yml` the `permissions` block (`contents: read`, `pages: write`, `id-token: write`), the `github-pages` environment on the deploy job, a `concurrency` group of `pages` with `cancel-in-progress: false`, and triggers on push to `main` plus `workflow_dispatch`. Guard the deploy job with `if: github.ref == 'refs/heads/main'` so a `workflow_dispatch` against any other branch runs the gates but cannot publish
 - [ ] T021 Confirm the built output contains zero JavaScript and exactly one render-blocking request, by running `npm run build` and checking that `dist/index.html` carries an inline `<style>` block rather than a `<link rel="stylesheet">` (quickstart V1.1, V1.3)
 
 **Checkpoint**: The build is green, gated, and deployable. Tokens exist. Content is validated. No
@@ -69,7 +77,7 @@ user story has shipped yet.
 
 ---
 
-## Phase 3: User Story 2 - Visitor reaches the site reliably (Priority: P2) 🎯 MVP
+## Phase 3: User Story 2 - Visitor reaches the site reliably (Priority: P2, build stage S1) 🎯 MVP
 
 **Goal**: Retire the 2021 site and serve a deliberately provisional page at
 `https://joeburkinshaw.com` over HTTPS, with every form of the address arriving at the same place.
@@ -107,7 +115,7 @@ SC-007 and SC-009 is met. This is a shippable increment.
 
 ---
 
-## Phase 4: User Story 3 - Owner updates content from a browser (Priority: P3)
+## Phase 4: User Story 3 - Owner updates content from a browser (Priority: P3, build stage S1)
 
 **Goal**: Prove the content pipeline is genuinely usable by someone with no toolchain, before any
 real content depends on it.
@@ -119,14 +127,14 @@ real content depends on it.
 
 - [ ] T035 [US3] Write `README.md` in under twenty lines covering how to change the bio, swap the photograph, and add a link, referencing `src/data/site.md` as the only file to edit (FR-015)
 - [ ] T036 [US3] Run quickstart V1.4 by hand: delete the `name` line from `src/data/site.md`, run `npm run build`, and confirm a non-zero exit naming `name` as missing. Restore it and confirm the build passes (FR-013, SC-008)
-- [ ] T037 [US3] Push the malformed `src/data/site.md` from T036 to a branch, open a pull request, and confirm the failing gate in `.github/workflows/deploy.yml` blocks the deploy job so the live page stays untouched, rather than deploying a partial artifact (FR-013, SC-008)
+- [ ] T037 [US3] Commit the malformed `src/data/site.md` from T036 to a throwaway branch, then trigger the workflow against it with `gh workflow run deploy.yml --ref <branch>`, which the `workflow_dispatch` trigger in `.github/workflows/deploy.yml` already permits. Confirm the build job fails at the schema parse, the deploy job is skipped rather than run, and the live page is unchanged. Delete the branch afterwards (FR-013, SC-008)
 - [ ] T038 [US3] From a phone browser, edit `description` in `src/data/site.md` via the GitHub web editor, commit to `main`, and confirm the change is live within five minutes with no manual step anywhere in the chain (SC-003, FR-011, FR-014)
 
 **Checkpoint**: US2 and US3 both work independently. The site is live and casually editable.
 
 ---
 
-## Phase 5: User Story 1 - Visitor finds out who Joe is (Priority: P1)
+## Phase 5: User Story 1 - Visitor finds out who Joe is (Priority: P1, build stages S2 and S3)
 
 **Goal**: The highest-value story. Real content and the final composition, so a stranger learns who
 Joe is in ten seconds.
@@ -139,7 +147,7 @@ them.
 
 ### Composition
 
-- [ ] T039 [US1] Build the final composition in `src/pages/index.astro` and its scoped `<style>` block: one column, a 60 to 75 character measure, asymmetric rather than centred, all spacing from the Phase 2 scale. Hairline rules rather than boxes, zero border radius, no shadows, no gradients (Principle VI)
+- [ ] T039 [US1] Build the final composition in `src/pages/index.astro` and its scoped `<style>` block: one column, a 60 to 75 character measure, asymmetric rather than centred, all spacing from the Stage 1 token scale built in T012. Hairline rules rather than boxes, zero border radius, no shadows, no gradients (Principle VI)
 - [ ] T040 [US1] Extend the schema in `src/lib/site.ts` to require `role`, `location`, `photo` and `photoAlt`, require `photoAlt` to differ from `name`, and treat the Markdown body as the bio. Remove `provisional` from the schema entirely rather than defaulting it false, per data-model.md's one-way state transition
 
 ### Content, OWNER-dependent
@@ -154,7 +162,7 @@ them.
 - [ ] T045 [P] [US1] Run quickstart V2.1: no horizontal scrolling at 320px or at a wide desktop width, and no body line beyond roughly 75 characters (FR-008)
 - [ ] T046 [P] [US1] Run quickstart V2.2: the whole page traversable by keyboard with a clearly visible focus indicator (FR-006, and the keyboard half of SC-005)
 - [ ] T047 [P] [US1] Run quickstart V2.5: confirm no raw colour, size or spacing literal appears in any component style block. Every value comes from a token (Principle VI)
-- [ ] T048 [US1] Run quickstart V2.3, a Lighthouse mobile audit: 100 for Accessibility, Best Practices and SEO, Performance at 95 or above. Accessibility at 100 is the automated-audit half of SC-005. Record the four scores in this task, since this is the manual half of Principle VII per plan.md's Complexity Tracking
+- [ ] T048 [US1] Run quickstart V2.3, a Lighthouse mobile audit: 100 for Accessibility, Best Practices and SEO, Performance at 95 or above. Accessibility at 100 is the automated-audit half of SC-005. Record the four scores in this task, since this is the manual half of Principle VII per plan.md's Complexity Tracking. Record First Contentful Paint and Largest Contentful Paint from the same throttled run and check both against SC-002's 1s-readable and 3s-complete targets, since the byte budgets are a proxy for those rather than a measurement of them (SC-002)
 - [ ] T049 [US1] Run `node scripts/check-budgets.mjs`: photograph under 150KB, total under 250KB, HTML plus CSS under 20KB, zero JavaScript (SC-002 budgets)
 - [ ] T050 [US1] Run quickstart V3.1 with five people who have not met Joe. All five state his profession and location after ten seconds (SC-001)
 
@@ -162,7 +170,7 @@ them.
 
 ---
 
-## Phase 6: User Story 4 - Visitor follows Joe elsewhere (Priority: P4)
+## Phase 6: User Story 4 - Visitor follows Joe elsewhere (Priority: P4, build stage S3)
 
 **Goal**: A short set of verified links to Joe elsewhere. Strictly additive: a dead link is worse
 than no link.
@@ -171,7 +179,7 @@ than no link.
 
 - [ ] T051 [US4] Extend the schema in `src/lib/site.ts` with a `links` array of `label` and `url`, requiring absolute `https:` URLs, rejecting duplicate URLs, and allowing the array to be empty (FR-004, data-model.md)
 - [ ] T052 [US4] **OWNER** Confirm which links to display. contracts/content-schema.md assumes two, GitHub and LinkedIn, and assumes the Twitter and Instagram profiles are dropped unless confirmed active. Confirm each destination is live before it ships (FR-020)
-- [ ] T053 [US4] Add the confirmed links to `src/data/site.md` and render them in `src/pages/index.astro` as a list, with no icons, and distinguishable as links without relying on colour alone (FR-004, Principle VI). Confirm that adding one more link afterwards is a single frontmatter entry touching no other file (FR-012, FR-018 of contracts/content-schema.md)
+- [ ] T053 [US4] Add the confirmed links to `src/data/site.md` and render them in `src/pages/index.astro` as a list, with no icons, and distinguishable as links without relying on colour alone (FR-004, Principle VI). Confirm that adding one more link afterwards is a single frontmatter entry touching no other file (FR-012)
 - [ ] T054 [US4] Verify the page still renders correctly with an empty `links` array, by emptying it temporarily and rebuilding (FR-004)
 - [ ] T055 [P] [US4] Run quickstart V3.3: every displayed link reaches a live destination belonging to Joe (SC-004)
 - [ ] T056 [P] [US4] Confirm each link is keyboard-focusable with a visible indicator, and that no link label is meaningless out of context (FR-006, data-model.md)
@@ -183,7 +191,7 @@ than no link.
 ## Phase 7: Polish and Cross-Cutting Concerns
 
 - [ ] T057 [P] Re-read `README.md` against FR-015 now that links and the photograph exist, and confirm all three tasks are still findable in under twenty lines
-- [ ] T058 [P] Re-run the full quickstart Phase 2 and Phase 3 validation lists end to end, rather than trusting the per-story runs
+- [ ] T058 [P] Re-run the full quickstart Stage 2 and Stage 3 validation lists end to end, rather than trusting the per-story runs
 - [ ] T059 Confirm `provisional` appears nowhere in `src/data/site.md` or `src/lib/site.ts`, so the interim state cannot be reactivated by accident
 - [ ] T060 Re-verify plan.md's Constitution Check against the finished code, and confirm the two recorded departures in Complexity Tracking, being the omitted ESLint and the un-automated Lighthouse, are both still the right call and still accurately described
 - [ ] T061 Confirm `dependencies` still contains only `astro` and that no dev dependency arrived without its three-sentence justification in research.md (Principle III)
@@ -236,7 +244,7 @@ independent of one another.
 
 ```bash
 # Three independent files, no shared edits:
-Task: "Create src/data/site.md with Phase 1 frontmatter"
+Task: "Create src/data/site.md with Stage 1 frontmatter"
 Task: "Create public/favicon.svg"
 Task: "Create scripts/check-budgets.mjs"
 ```

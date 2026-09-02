@@ -9,7 +9,7 @@ frontmatter or prose. Nothing in it is code.
 
 ---
 
-## Phase 1 shape
+## Stage 1 shape
 
 ```markdown
 ---
@@ -20,9 +20,9 @@ provisional: true
 ---
 ```
 
-The body is empty at Phase 1. The page renders its declared interim state.
+The body is empty at Stage 1. The page renders its declared interim state.
 
-## Phase 3 shape
+## Stage 3 shape
 
 ```markdown
 ---

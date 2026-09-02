@@ -134,8 +134,14 @@ all.
   of the source tree. It exists because `.astro` is a bespoke syntax and no generic formatter handles
   it.
 
-ESLint is deliberately omitted and recorded in the plan's Complexity Tracking, with the condition
-for revisiting it.
+**No dedicated linter.** Constitution v1.0.1 requires type check, build and format as blocking
+gates, and requires the linter decision to be recorded at plan level either way. This section is
+that record. ESLint is omitted because the lintable surface is close to empty: zero client
+JavaScript, one page, `strict` TypeScript, and `astro check` already reporting unused variables,
+unreachable code, type errors and template diagnostics. Adding it would mean roughly four more dev
+dependencies and a config to maintain for near-zero marginal signal, which is what Principle III
+exists to prevent. **Revisit when** client-side JavaScript is introduced under Principle II's
+exception process, or when a second contributor joins and shared conventions stop being implicit.
 
 **Alternatives considered**: Biome would collapse lint and format into one dependency, but its
 `.astro` support covers only the embedded script portion rather than the template, so it cannot

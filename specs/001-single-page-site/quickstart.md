@@ -21,7 +21,8 @@ npm ci
 npm run dev        # local preview
 npm run build      # produces dist/
 npm run preview    # serve the built output
-npm run check      # prettier --check, astro check, budgets
+npm run check      # prettier --check, astro check (no build, no budgets)
+npm run budgets    # byte budgets, requires npm run build first
 ```
 
 `npm ci` from a clean clone must succeed with no further setup. If it does not, Principle IV is
@@ -29,7 +30,7 @@ broken and that is the bug to fix first.
 
 ---
 
-## Phase 1 validation
+## Stage 1 validation
 
 **Gate: SC-006, SC-007, SC-009.**
 
@@ -105,7 +106,7 @@ notice needed (FR-010, SC-007).
 
 ---
 
-## Phase 2 validation
+## Stage 2 validation
 
 **Gate: SC-002, SC-005, and the byte budgets.**
 
@@ -125,7 +126,7 @@ notice needed (FR-010, SC-007).
 
 ---
 
-## Phase 3 validation
+## Stage 3 validation
 
 **Gate: SC-001, SC-003, SC-004, SC-010.**
 

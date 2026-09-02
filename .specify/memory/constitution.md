@@ -1,6 +1,26 @@
 <!--
 SYNC IMPACT REPORT
 ==================
+
+--- Amendment 1.0.0 -> 1.0.1 (2026-09-02) ---
+PATCH: wording clarification, no principle added, removed or redefined.
+
+Modified section: Development Workflow.
+  Was: "Type check, build, lint and format MUST run as blocking checks."
+  Now: "Type check, build and format MUST run as blocking checks", followed by a requirement that
+  the linter decision be recorded at plan level either way.
+
+Rationale: the previous wording mandated a blocking gate this project deliberately does not build.
+plan.md Complexity Tracking recorded the omission of ESLint per the Governance departure clause,
+but a MUST that is permanently unmet erodes the authority of the others. The amendment states the
+actual standard and keeps the decision explicit rather than silent.
+
+Invalidated by this amendment: the ESLint row in plan.md Complexity Tracking is no longer a
+departure and should be removed, with its reasoning retained in research.md section 5.
+
+Principles: unchanged, all seven intact.
+
+--- Initial ratification -> 1.0.0 (2026-09-01) ---
 Version change: (unset template) -> 1.0.0
 Rationale: initial ratification. No prior version existed; the file held only unfilled
 template placeholders, so this is an initial adoption rather than an amendment.
@@ -113,10 +133,12 @@ side effect of this rebuild.
 
 ## Development Workflow
 
-The default branch MUST always be deployable, because it is what gets deployed. Type check, build,
-lint and format MUST run as blocking checks. Before merging, the following MUST be confirmed: the
-client JavaScript payload is unchanged, no dependency was added without its justification, no design
-literal escaped the token sheet, and the page holds up small, wide, light, dark, and keyboard-only.
+The default branch MUST always be deployable, because it is what gets deployed. Type check, build
+and format MUST run as blocking checks. Whether a dedicated linter joins them is a plan-level
+decision that MUST be recorded either way, since at small scale type checking may already cover the
+entire lintable surface. Before merging, the following MUST be confirmed: the client JavaScript
+payload is unchanged, no dependency was added without its justification, no design literal escaped
+the token sheet, and the page holds up small, wide, light, dark, and keyboard-only.
 
 ## Governance
 
@@ -137,4 +159,4 @@ single reviewer, the automated gates required by Principle VII are the enforceme
 MUST NOT be disabled to unblock work. Numeric budgets and the ordered manual cutover steps are
 planning-level detail: they belong in the feature spec, plan and task list, not in this document.
 
-**Version**: 1.0.0 | **Ratified**: 2026-09-01 | **Last Amended**: 2026-09-01
+**Version**: 1.0.1 | **Ratified**: 2026-09-01 | **Last Amended**: 2026-09-02
