@@ -1,0 +1,42 @@
+name: Deploy
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# Queue rather than cancel: aborting a half-finished Pages deployment is worse
+# than waiting behind one.
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      # withastro/action installs, runs build-cmd, and uploads a Pages
+      # artifact. It does not deploy; that is the job below.
+      # node-version is pinned to match .nvmrc. The action's own default is 24.
+      - uses: withastro/action@v6
+        with:
+          node-version: 22.23.2
+          build-cmd: npm run build:ci
+
+  deploy:
+    needs: build
+    # Guard against workflow_dispatch from a non-main ref publishing that ref.
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v5

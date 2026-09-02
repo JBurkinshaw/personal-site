@@ -38,15 +38,15 @@ Single project, flat, at repository root per plan.md. Source in `src/`, no `test
 
 **Purpose**: Scaffold and toolchain. Nothing here is visible to a visitor.
 
-- [ ] T001 Scaffold the bare Astro `minimal` starter into the repository root with `npm create astro@latest . -- --template minimal --no-git --skip-houston`, accepting the prompt warning that the directory is not empty, then confirm `.gitignore`, `PROJECT-BRIEF.md`, `.specify/` and `specs/` all survived unmodified
-- [ ] T002 Create `.nvmrc` containing `22.16.0` as the single source of truth for the Node version, matched by CI
-- [ ] T003 Set `package.json` scripts: `dev`, `build` (`astro build`), `build:ci` (`prettier --check . && astro check && astro build && node scripts/check-budgets.mjs`), `check` (`prettier --check . && astro check`, no build and no budgets, so it runs on a clean tree), `budgets` (`node scripts/check-budgets.mjs`, requires a prior build), and `preview`
-- [ ] T004 Point `tsconfig.json` at `astro/tsconfigs/strict` per plan.md's strict-mode requirement
-- [ ] T005 [P] Add dev dependencies `@astrojs/check` and `typescript`, both required by `astro check` and neither bundled with `astro`, per research.md section 5
-- [ ] T006 [P] Add dev dependencies `prettier` and `prettier-plugin-astro`, and create `.prettierrc` registering the plugin
-- [ ] T007 [P] Create `.prettierignore` excluding `dist/`, `.astro/`, `node_modules/` and `specs/`, so the format gate does not reformat the design documents' hand-aligned tables
-- [ ] T008 Configure `astro.config.mjs` with `site: 'https://joeburkinshaw.com'`, no `base` key, and `build.inlineStylesheets: 'always'` per research.md section 3
-- [ ] T009 Verify `package.json` `dependencies` contains `astro` and nothing else, and that the four dev dependencies above are the only entries in `devDependencies` (Principle III)
+- [X] T001 Scaffold the bare Astro `minimal` starter into the repository root with `npm create astro@latest . -- --template minimal --no-git --skip-houston`, accepting the prompt warning that the directory is not empty, then confirm `.gitignore`, `PROJECT-BRIEF.md`, `.specify/` and `specs/` all survived unmodified
+- [X] T002 Create `.nvmrc` containing `22.16.0` as the single source of truth for the Node version, matched by CI
+- [X] T003 Set `package.json` scripts: `dev`, `build` (`astro build`), `build:ci` (`prettier --check . && astro check && astro build && node scripts/check-budgets.mjs`), `check` (`prettier --check . && astro check`, no build and no budgets, so it runs on a clean tree), `budgets` (`node scripts/check-budgets.mjs`, requires a prior build), and `preview`
+- [X] T004 Point `tsconfig.json` at `astro/tsconfigs/strict` per plan.md's strict-mode requirement
+- [X] T005 [P] Add dev dependencies `@astrojs/check` and `typescript`, both required by `astro check` and neither bundled with `astro`, per research.md section 5
+- [X] T006 [P] Add dev dependencies `prettier` and `prettier-plugin-astro`, and create `.prettierrc` registering the plugin
+- [X] T007 [P] Create `.prettierignore` excluding `dist/`, `.astro/`, `node_modules/` and `specs/`, so the format gate does not reformat the design documents' hand-aligned tables
+- [X] T008 Configure `astro.config.mjs` with `site: 'https://joeburkinshaw.com'`, no `base` key, and `build.inlineStylesheets: 'always'` per research.md section 3
+- [X] T009 Verify `package.json` `dependencies` contains `astro` and nothing else, and that the four dev dependencies above are the only entries in `devDependencies` (Principle III)
 
 **Checkpoint**: `npm ci && npm run build` succeeds from a clean clone with no secrets.
 
@@ -59,18 +59,18 @@ user story depends on all of it.
 
 **CRITICAL**: No user story work can begin until this phase is complete.
 
-- [ ] T010 Create `src/styles/global.css` with a minimal reset and `color-scheme: light dark` on `:root`
-- [ ] T011 Add the colour tokens to `src/styles/global.css` as four values only (ink, paper, mid-grey secondary, one accent), each declared **twice**: a plain light-mode value first, then the same custom property redeclared with `light-dark()`, per research.md section 2. Verify WCAG AA contrast for both appearances at this point, not later
-- [ ] T012 Add the spacing scale and the type scale to `src/styles/global.css`, both derived from a single base unit, at most four sizes and two weights, using a system font stack with no `@font-face` and no network request (Principle VI)
-- [ ] T013 [P] Create `src/data/site.md` with the Stage 1 frontmatter shape from contracts/content-schema.md: `name`, `title`, `description`, `provisional: true`, and an empty body. Note the path is `src/data/`, deliberately not `src/content/`, to stay clear of content-collection conventions
-- [ ] T014 Create `src/lib/site.ts` importing `src/data/site.md` as a plain Markdown module, importing `z` from `astro/zod`, and defining the Stage 1 schema: non-empty trimmed `name`, `title`, `description` at most 160 characters, optional boolean `provisional`. Include only fields that exist at this stage (Principle I)
-- [ ] T015 In `src/lib/site.ts`, run `safeParse` at module scope and `throw` on failure with a message naming the offending field and what was expected, so the failure surfaces during `astro build` and satisfies FR-013. Export the parsed result as separately typed `profile` and `metadata` values per data-model.md
-- [ ] T016 [P] Create `public/favicon.svg`, monochrome and consistent with the token palette
-- [ ] T017 Create `src/layouts/Base.astro` with the html shell, `lang`, viewport, a `<title>` and meta description from `metadata`, a canonical URL derived from `Astro.site` rather than hand-written, Open Graph and Twitter card tags, the favicon link, and a `global.css` import. No client-side script of any kind
-- [ ] T018 [P] Create `scripts/check-budgets.mjs` using Node builtins only. It must walk `dist/` and exit non-zero if any `.js` or `.mjs` file is emitted, if HTML plus CSS exceeds 20KB uncompressed, if any single image exceeds 150KB, or if total output exceeds 250KB. Print the measured totals on success so the numbers are visible in CI logs
-- [ ] T019 Create `.github/workflows/deploy.yml` with the two-job shape from contracts/deployment.md: a `build` job running `actions/checkout@v7` then `withastro/action@v6` with `node-version: 22.16.0` and `build-cmd: npm run build:ci`, and a separate `deploy` job with `needs: build` running `actions/deploy-pages@v5` with `id: deployment`. `withastro/action` only uploads a Pages artifact; it does not deploy
-- [ ] T020 Add to `.github/workflows/deploy.yml` the `permissions` block (`contents: read`, `pages: write`, `id-token: write`), the `github-pages` environment on the deploy job, a `concurrency` group of `pages` with `cancel-in-progress: false`, and triggers on push to `main` plus `workflow_dispatch`. Guard the deploy job with `if: github.ref == 'refs/heads/main'` so a `workflow_dispatch` against any other branch runs the gates but cannot publish
-- [ ] T021 Confirm the built output contains zero JavaScript and exactly one render-blocking request, by running `npm run build` and checking that `dist/index.html` carries an inline `<style>` block rather than a `<link rel="stylesheet">` (quickstart V1.1, V1.3)
+- [X] T010 Create `src/styles/global.css` with a minimal reset and `color-scheme: light dark` on `:root`
+- [X] T011 Add the colour tokens to `src/styles/global.css` as four values only (ink, paper, mid-grey secondary, one accent), each declared **twice**: a plain light-mode value first, then the same custom property redeclared with `light-dark()`, per research.md section 2. Verify WCAG AA contrast for both appearances at this point, not later
+- [X] T012 Add the spacing scale and the type scale to `src/styles/global.css`, both derived from a single base unit, at most four sizes and two weights, using a system font stack with no `@font-face` and no network request (Principle VI)
+- [X] T013 [P] Create `src/data/site.md` with the Stage 1 frontmatter shape from contracts/content-schema.md: `name`, `title`, `description`, `provisional: true`, and an empty body. Note the path is `src/data/`, deliberately not `src/content/`, to stay clear of content-collection conventions
+- [X] T014 Create `src/lib/site.ts` importing `src/data/site.md` as a plain Markdown module, importing `z` from `astro/zod`, and defining the Stage 1 schema: non-empty trimmed `name`, `title`, `description` at most 160 characters, optional boolean `provisional`. Include only fields that exist at this stage (Principle I)
+- [X] T015 In `src/lib/site.ts`, run `safeParse` at module scope and `throw` on failure with a message naming the offending field and what was expected, so the failure surfaces during `astro build` and satisfies FR-013. Export the parsed result as separately typed `profile` and `metadata` values per data-model.md
+- [X] T016 [P] Create `public/favicon.svg`, monochrome and consistent with the token palette
+- [X] T017 Create `src/layouts/Base.astro` with the html shell, `lang`, viewport, a `<title>` and meta description from `metadata`, a canonical URL derived from `Astro.site` rather than hand-written, Open Graph and Twitter card tags, the favicon link, and a `global.css` import. No client-side script of any kind
+- [X] T018 [P] Create `scripts/check-budgets.mjs` using Node builtins only. It must walk `dist/` and exit non-zero if any `.js` or `.mjs` file is emitted, if HTML plus CSS exceeds 20KB uncompressed, if any single image exceeds 150KB, or if total output exceeds 250KB. Print the measured totals on success so the numbers are visible in CI logs
+- [X] T019 Create `.github/workflows/deploy.yml` with the two-job shape from contracts/deployment.md: a `build` job running `actions/checkout@v7` then `withastro/action@v6` with `node-version: 22.16.0` and `build-cmd: npm run build:ci`, and a separate `deploy` job with `needs: build` running `actions/deploy-pages@v5` with `id: deployment`. `withastro/action` only uploads a Pages artifact; it does not deploy
+- [X] T020 Add to `.github/workflows/deploy.yml` the `permissions` block (`contents: read`, `pages: write`, `id-token: write`), the `github-pages` environment on the deploy job, a `concurrency` group of `pages` with `cancel-in-progress: false`, and triggers on push to `main` plus `workflow_dispatch`. Guard the deploy job with `if: github.ref == 'refs/heads/main'` so a `workflow_dispatch` against any other branch runs the gates but cannot publish
+- [X] T021 Confirm the built output contains zero JavaScript and exactly one render-blocking request, by running `npm run build` and checking that `dist/index.html` carries an inline `<style>` block rather than a `<link rel="stylesheet">` (quickstart V1.1, V1.3)
 
 **Checkpoint**: The build is green, gated, and deployable. Tokens exist. Content is validated. No
 user story has shipped yet.
@@ -88,8 +88,8 @@ warning.
 
 ### Implementation
 
-- [ ] T022 [US2] Create `src/pages/index.astro` using `Base.astro`, rendering `profile.name` as the single `<h1>` and one line stating the site is being rebuilt. No stand-in photograph, no placeholder prose posing as a bio, no ornament. Values come from tokens only (FR-021, Principle VI)
-- [ ] T023 [P] [US2] Create `public/CNAME` containing exactly `joeburkinshaw.com` with no scheme, no trailing slash and a single trailing newline
+- [X] T022 [US2] Create `src/pages/index.astro` using `Base.astro`, rendering `profile.name` as the single `<h1>` and one line stating the site is being rebuilt. No stand-in photograph, no placeholder prose posing as a bio, no ornament. Values come from tokens only (FR-021, Principle VI)
+- [X] T023 [P] [US2] Create `public/CNAME` containing exactly `joeburkinshaw.com` with no scheme, no trailing slash and a single trailing newline
 - [ ] T024 [US2] Push to `main` and confirm the workflow runs both jobs, that all four gates pass, and that the artifact deploys with no manual build or upload step (FR-014). Confirm the site is live at `jburkinshaw.github.io` before touching DNS, so the cutover is not pointing a domain at a broken build
 
 ### Cutover: OWNER, manual, strictly in this order

@@ -1,0 +1,17 @@
+# Generated or vendored
+node_modules/
+dist/
+.astro/
+package-lock.json
+
+# Upstream-owned tooling, not ours to reformat
+.claude/
+.specify/
+
+# Design documents: hand-aligned tables and deliberate prose wrapping
+specs/
+
+# Local working notes
+PROJECT-BRIEF.md
+CONSTITUTION-INPUT.md
+DEFERRED-NOTES.md

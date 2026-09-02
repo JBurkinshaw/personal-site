@@ -19,44 +19,68 @@ auto-detects from the lockfile.
 
 **Rationale**: The default of 24 is two major versions above local. An unpinned CI Node is a silent
 upgrade waiting to break a build nobody touched, which is exactly what Principle IV's pinning clause
-exists to prevent. Astro 7.2.10 declares `engines.node >=22.12.0`, so 22.16.0 is supported.
+exists to prevent.
+
+**Version corrected during implementation.** The pin was first 22.16.0, matching the local install
+and satisfying Astro's own `engines.node >=22.12.0`. Installing revealed that `astro` depends on
+`unifont`, which depends on `undici@8.10.1`, which requires Node `>=22.19.0`, so every install
+emitted an `EBADENGINE` warning. `unifont` backs Astro's font API, which this site does not use, so
+nothing was broken, but a standing warning obscures real ones. The pin is now **22.23.2**, the
+current Node 22 LTS at the time of writing, in `.nvmrc` and the workflow alike, and
+`package.json` declares `engines.node >=22.19.0` to state the real transitive floor rather than
+Astro's.
 
 **Alternatives considered**: Floating on the action default was rejected for the reason above.
 Pinning to the exact patch `v6.1.2` rather than the `v6` major tag was rejected because the major
 tag picks up security patches without intervention, and a static site has no API surface for a minor
-release to break. `.nvmrc` holds 22.16.0 as the single source of truth so local and CI cannot drift.
+release to break. `.nvmrc` holds the version as the single source of truth so local and CI cannot drift.
 
 ---
 
 ## 2. `light-dark()` support
 
-**Correction to the plan input.** The prompt assumed `light-dark()` could carry the token sheet
-alone. It cannot, quite.
+**Corrected twice.** The plan input assumed `light-dark()` could carry the token sheet alone. It
+cannot. The first fix, a duplicate declaration, then turned out not to survive the build. What
+follows is the mechanism that actually ships.
 
-**Decision**: Declare every colour token twice. A plain light-mode value first, then the same token
-redeclared with `light-dark()`. Set `color-scheme: light dark` on `:root`.
+**Decision**: Declare each colour token once with `light-dark()` inside `:root`, set
+`color-scheme: light dark`, and put the fallback in an `@supports not (...)` block after `:root`.
 
 ```css
 :root {
   color-scheme: light dark;
-  --colour-ink: #1a1a1a;
-  --colour-ink: light-dark(#1a1a1a, #ededed);
+  --colour-ink: light-dark(#17191b, #e9e7e3);
+}
+
+@supports not (color: light-dark(#000, #fff)) {
+  :root {
+    --colour-ink: #17191b;
+  }
 }
 ```
 
 **Verified**: `light-dark()` is Baseline **newly available**, dated May 2024, and not yet Baseline
-widely available. It also requires `color-scheme` to be set to take effect, and is valid only where a
-`<color>` is expected.
+widely available. It requires `color-scheme` to be set, and is valid only where a `<color>` is
+expected. The `@supports` block was confirmed present and intact in built output.
 
-**Rationale**: In a browser without support, the second declaration is invalid and dropped, leaving
-the first. Without the first, the token would fall back to `inherit` or `initial`, which risks the
-one outcome FR-007 forbids outright: text the same colour as its background. The duplicate
-declaration costs a handful of bytes and needs no media query, no JavaScript and no build step.
+**Rejected after testing: the duplicate declaration.** Declaring each token twice, plain value then
+`light-dark()`, reads well and needs no feature query, and it was the original decision here. It
+does not work. The CSS minifier treats a declaration overridden later in the same rule as dead and
+strips it, so the source carried two declarations per token and `dist/index.html` carried one. The
+fallback was silently absent from every build. This was caught by grepping built output rather than
+by reading source, which is the only way it could have been caught.
 
-**Alternatives considered**: `@media (prefers-color-scheme: dark)` overrides alone would work
-everywhere and were the conventional choice, but double the token block and read worse.
-`@supports` was rejected as unnecessary, since CSS's own invalid-declaration cascade already does
-exactly this job. Relying on `light-dark()` unguarded was rejected on the FR-007 risk.
+**Consequence if unguarded**: each `var()` substitution becomes invalid at computed-value time, so
+the property resolves to `unset`. Text falls back to inherited black on a transparent canvas. The
+page stays readable, but dark mode disappears entirely and the accent, the secondary grey and the
+derived hairline rule all collapse, which is the degradation FR-007 forbids.
+
+**Alternatives considered**: `@media (prefers-color-scheme: dark)` overrides would work everywhere
+with no feature query, but double the token block and read worse. Relying on `light-dark()`
+unguarded is defensible given the spec's assumption of current browsers only, and becomes more so
+when `light-dark()` reaches Baseline widely available around November 2026; it was rejected because
+the guard costs seven lines and a few dozen bytes. Disabling CSS minification was rejected outright
+for the budget cost.
 
 ---
 

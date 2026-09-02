@@ -1,0 +1,128 @@
+/*
+  Design tokens and reset.
+
+  light-dark() is Baseline newly available rather than widely available, so the
+  colours need a fallback. It lives in the @supports block below rather than as a
+  duplicate declaration inside :root, because the CSS minifier treats a
+  declaration overridden later in the same rule as dead and strips it. A
+  duplicate pair survives in source and vanishes from the build.
+
+  Four colour tokens only, per constitution Principle VI. The hairline rule is
+  derived from ink rather than being a fifth palette entry.
+*/
+
+:root {
+  color-scheme: light dark;
+
+  /* Colour */
+  --colour-paper: light-dark(#faf9f7, #121416);
+  --colour-ink: light-dark(#17191b, #e9e7e3);
+  --colour-secondary: light-dark(#55595f, #9aa0a7);
+  --colour-accent: light-dark(#8f1d16, #f0938a);
+
+  /* Derived, not a palette entry */
+  --colour-rule: color-mix(in srgb, var(--colour-ink) 16%, transparent);
+
+  /* Type: one family, two weights, four sizes */
+  --font-sans:
+    system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial,
+    sans-serif;
+  --weight-regular: 400;
+  --weight-medium: 600;
+  --text-sm: 0.875rem;
+  --text-base: 1.0625rem;
+  --text-lg: 1.3125rem;
+  --text-xl: clamp(1.75rem, 1.25rem + 2.5vw, 2.5rem);
+  --leading-tight: 1.15;
+  --leading-body: 1.6;
+
+  /* Space: one base unit of 0.25rem, everything a multiple */
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 1rem;
+  --space-4: 1.5rem;
+  --space-5: 2.5rem;
+  --space-6: 4rem;
+  --space-7: 6.5rem;
+
+  /* Measure, within the 60 to 75 character band */
+  --measure: 68ch;
+}
+
+/*
+  Fallback for browsers without light-dark(). Same specificity as :root and later
+  in source order, so it wins where it applies. Verified to survive minification,
+  unlike a duplicate declaration. Values match the light branch above; keep the
+  two in step. --colour-rule derives from --colour-ink, so it recovers here too.
+*/
+@supports not (color: light-dark(#000, #fff)) {
+  :root {
+    --colour-paper: #faf9f7;
+    --colour-ink: #17191b;
+    --colour-secondary: #55595f;
+    --colour-accent: #8f1d16;
+  }
+}
+
+/* Reset */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+body,
+h1,
+h2,
+h3,
+p,
+ul,
+ol,
+figure {
+  margin: 0;
+  padding: 0;
+}
+
+ul,
+ol {
+  list-style: none;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
+
+img,
+picture,
+svg {
+  display: block;
+  max-width: 100%;
+}
+
+a {
+  color: var(--colour-accent);
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.2em;
+}
+
+:focus-visible {
+  outline: 2px solid var(--colour-accent);
+  outline-offset: 3px;
+}
+
+/*
+  No prefers-reduced-motion block yet: Stage 1 ships no transitions or
+  animations, so there is nothing to disable. It arrives with the link and
+  focus transitions in Stage 2, scoped to those properties.
+*/
+
+body {
+  background-color: var(--colour-paper);
+  color: var(--colour-ink);
+  font-family: var(--font-sans);
+  font-size: var(--text-base);
+  font-weight: var(--weight-regular);
+  line-height: var(--leading-body);
+  -webkit-font-smoothing: antialiased;
+}
