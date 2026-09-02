@@ -1,0 +1,14 @@
+# Local working notes: research, input and scratch for the Spec Kit stages, not shared.
+PROJECT-BRIEF.md
+CONSTITUTION-INPUT.md
+DEFERRED-NOTES.md
+
+# Dependencies and build output. Never committed; the site is built in CI.
+node_modules/
+dist/
+.astro/
+
+# Environment and editor cruft
+.env
+.env.*
+.DS_Store
