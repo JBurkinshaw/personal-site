@@ -281,3 +281,14 @@ indefinitely without leaving anything broken. Phase 7 is a re-check, not new wor
 ### The one thing to be careful about
 
 T025 is irreversible. Everything else here can be undone with a revert.
+
+---
+
+## Phase 8: Convergence
+
+Appended by `/speckit-converge` on 2026-09-02, assessing the code after Stage 1 against
+spec.md, plan.md and the constitution. Existing tasks were not renumbered or altered.
+
+- [X] T067 CRITICAL Remove the unused `Props` interface and its destructuring defaults from `src/layouts/Base.astro`, reading `title` and `description` directly from `metadata`, since the only caller passes no props and a second page does not exist, per Constitution I (unrequested)
+- [X] T068 Extend `scripts/check-budgets.mjs` to fail when `dist/index.html` lacks an `@supports not (color: light-dark(...))` block containing all four colour tokens, per FR-007 and Constitution VII. This fallback was silently stripped by the CSS minifier once already and was invisible in source, so it needs a guard rather than a memory (missing)
+- [X] T069 Extend `scripts/check-budgets.mjs` to fail when any file in `dist/` references an origin outside `joeburkinshaw.com`, covering `src`, `href`, `@import` and `url()`, so a stray third-party request cannot ship unnoticed, per FR-010, SC-007 and Constitution II (partial)

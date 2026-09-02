@@ -2,13 +2,10 @@
 import "../styles/global.css";
 import { metadata } from "../lib/site";
 
-interface Props {
-  title?: string;
-  description?: string;
-}
-
-const { title = metadata.title, description = metadata.description } =
-  Astro.props;
+// No Props interface. There is one page and one caller, so overridable title and
+// description would be structure ahead of a second use case, which Principle I
+// prohibits. Add them when a second page exists and needs them.
+const { title, description } = metadata;
 
 // Derived from `site` in astro.config.mjs so it cannot drift from the deployed
 // address or be typed wrongly by hand.
