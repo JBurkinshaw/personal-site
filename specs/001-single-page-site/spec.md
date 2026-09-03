@@ -73,17 +73,17 @@ and the `www` form. All three arrive at the same page with a valid certificate a
 
 ### User Story 3 - The owner updates the content from a browser (Priority: P3)
 
-Joe wants to change a sentence of his bio, swap the photograph, or correct a link. He is on his phone,
-away from his laptop, months since he last touched the project, with no memory of how it is built. He
-opens the repository in a browser, edits one file, saves, and the change is live shortly afterwards
-without him running anything.
+Joe wants to change a sentence of his bio, swap the photograph, or correct a link. It is months since
+he last touched the project and he has no memory of how it is built. He opens one file, in his editor
+or in the browser on GitHub, edits it, saves, and the change is live shortly afterwards without him
+running anything.
 
 **Why this priority**: The site this replaces was abandoned in 2021 because updating it was more
 effort than it was worth. A site that cannot be updated casually will be abandoned again, so this is
 a requirement rather than a convenience.
 
-**Independent Test**: On a phone, with no development tools installed, change one sentence of the
-bio through a web browser only. The change appears on the live site without any further action.
+**Independent Test**: With no development tools installed, change one sentence of the bio through a
+web browser. The change appears on the live site without any further action.
 
 **Acceptance Scenarios**:
 
@@ -230,7 +230,7 @@ followed and each one reaches a live page belonging to Joe.
 - **SC-002**: The page's text is readable within one second of request on a typical mobile
   connection, and fully complete including the photograph within three seconds.
 - **SC-003**: The owner can change a sentence of the bio and see it live within five minutes, using
-  only a phone browser, having read no more than twenty lines of instruction.
+  nothing but a web browser and having read no more than twenty lines of instruction.
 - **SC-004**: 100% of displayed links reach a live destination belonging to Joe on the day of
   publication.
 - **SC-005**: The page can be read and operated start to finish using a keyboard alone, and an

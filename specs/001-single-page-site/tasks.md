@@ -97,17 +97,17 @@ The order is a hard dependency. Full detail in contracts/deployment.md.
 
 - [X] T025 [US2] **OWNER** Delete the `CNAME` file from `JBurkinshaw/jburkinshaw.github.io`, then archive that repository, per contracts/deployment.md Step 1. This must happen before T027, because GitHub scopes a custom domain to one repository and will reject the domain here while that file exists. **This has no undo: it retires the 2021 site permanently**
 - [X] T026 [US2] **OWNER** At Hover, on the `joeburkinshaw.com` zone, per contracts/deployment.md Step 2: delete apex A records `192.30.252.153` and `192.30.252.154`, **delete the existing `www` A record `192.30.252.154`**, add apex A records `185.199.108.153`, `185.199.109.153`, `185.199.110.153` and `185.199.111.153`, then add a `www` CNAME to `jburkinshaw.github.io`. The `www` A record must go first: DNS forbids a CNAME coexisting with an A record at the same name
-- [ ] T027 [US2] **OWNER** In this repository's settings, per contracts/deployment.md Step 3: set Pages source to **GitHub Actions**, set the custom domain to `joeburkinshaw.com`, wait for certificate provisioning, then enable **Enforce HTTPS**. Provisioning can take up to 24 hours and a failure inside that window is expected, not a defect
+- [X] T027 [US2] **OWNER** In this repository's settings, per contracts/deployment.md Step 3: set Pages source to **GitHub Actions**, set the custom domain to `joeburkinshaw.com`, wait for certificate provisioning, then enable **Enforce HTTPS**. Provisioning can take up to 24 hours and a failure inside that window is expected, not a defect
 - [X] T028 [US2] Verify propagation with `dig +short joeburkinshaw.com A` returning only the four `185.199.10x.153` addresses, and `dig +short www.joeburkinshaw.com` resolving through the CNAME
 
 ### Verification
 
-- [ ] T029 [P] [US2] Run quickstart V1.8: the secure address serves with a valid certificate (FR-016), the insecure and `www` forms both arrive at the canonical secure address (FR-017), and `jburkinshaw.github.io/personal-site/` forwards to the new page (FR-018). No warning on any of them (SC-006). The bare `jburkinshaw.github.io` returns 404 by decision and is not checked
-- [ ] T030 [P] [US2] Run quickstart V1.9 with the browser network panel open: every request goes to `joeburkinshaw.com`, zero third-party origins, therefore no consent notice needed (FR-010, SC-007)
-- [ ] T031 [P] [US2] Run quickstart V1.6: the page stays readable and complete with images blocked, with CSS disabled, and with JavaScript disabled (FR-005, SC-009)
-- [ ] T032 [P] [US2] Run quickstart V1.7: legible in both light and dark with no flash and no JavaScript, and legible if `light-dark()` is unsupported, which the duplicate token declaration provides (FR-007)
-- [ ] T033 [P] [US2] Run quickstart V1.5: a visitor reads the page as deliberately unfinished rather than broken or abandoned (FR-021)
-- [ ] T034 [US2] Paste the address into a messaging app and a social composer, and confirm the tags emitted by `src/layouts/Base.astro` produce a title and description preview rather than a bare URL (FR-009)
+- [X] T029 [P] [US2] Run quickstart V1.8: the secure address serves with a valid certificate (FR-016), the insecure and `www` forms both arrive at the canonical secure address (FR-017), and `jburkinshaw.github.io/personal-site/` forwards to the new page (FR-018). No warning on any of them (SC-006). The bare `jburkinshaw.github.io` returns 404 by decision and is not checked
+- [X] T030 [P] [US2] Run quickstart V1.9 with the browser network panel open: every request goes to `joeburkinshaw.com`, zero third-party origins, therefore no consent notice needed (FR-010, SC-007)
+- [X] T031 [P] [US2] Run quickstart V1.6: the page stays readable and complete with images blocked, with CSS disabled, and with JavaScript disabled (FR-005, SC-009)
+- [X] T032 [P] [US2] Run quickstart V1.7: legible in both light and dark with no flash and no JavaScript, and legible if `light-dark()` is unsupported, which the duplicate token declaration provides (FR-007)
+- [X] T033 [P] [US2] Run quickstart V1.5: a visitor reads the page as deliberately unfinished rather than broken or abandoned (FR-021)
+- [X] T034 [US2] Paste the address into a messaging app and a social composer, and confirm the tags emitted by `src/layouts/Base.astro` produce a title and description preview rather than a bare URL (FR-009)
 
 **Checkpoint**: US2 complete. The old site is gone, HTTPS works, and the acceptance gate SC-006,
 SC-007 and SC-009 is met. This is a shippable increment.
@@ -119,15 +119,15 @@ SC-007 and SC-009 is met. This is a shippable increment.
 **Goal**: Prove the content pipeline is genuinely usable by someone with no toolchain, before any
 real content depends on it.
 
-**Independent Test**: From a phone browser only, with no development tools, change one field in
-`src/data/site.md` and confirm it is live without any further action.
+**Independent Test**: With no development tools, change one field in `src/data/site.md` through a
+web browser and confirm it is live without any further action.
 
 ### Implementation
 
-- [ ] T035 [US3] Write `README.md` in under twenty lines covering how to change the bio, swap the photograph, and add a link, referencing `src/data/site.md` as the only file to edit (FR-015)
-- [ ] T036 [US3] Run quickstart V1.4 by hand: delete the `name` line from `src/data/site.md`, run `npm run build`, and confirm a non-zero exit naming `name` as missing. Restore it and confirm the build passes (FR-013, SC-008)
-- [ ] T037 [US3] Commit the malformed `src/data/site.md` from T036 to a throwaway branch, then trigger the workflow against it with `gh workflow run deploy.yml --ref <branch>`, which the `workflow_dispatch` trigger in `.github/workflows/deploy.yml` already permits. Confirm the build job fails at the schema parse, the deploy job is skipped rather than run, and the live page is unchanged. Delete the branch afterwards (FR-013, SC-008)
-- [ ] T038 [US3] From a phone browser, edit `description` in `src/data/site.md` via the GitHub web editor, commit to `main`, and confirm the change is live within five minutes with no manual step anywhere in the chain (SC-003, FR-011, FR-014)
+- [X] T035 [US3] Write `README.md` in under twenty lines covering how to change the bio, swap the photograph, and add a link, referencing `src/data/site.md` as the only file to edit (FR-015)
+- [X] T036 [US3] Run quickstart V1.4 by hand: delete the `name` line from `src/data/site.md`, run `npm run build`, and confirm a non-zero exit naming `name` as missing. Restore it and confirm the build passes (FR-013, SC-008)
+- [X] T037 [US3] Commit the malformed `src/data/site.md` from T036 to a throwaway branch, then trigger the workflow against it with `gh workflow run deploy.yml --ref <branch>`, which the `workflow_dispatch` trigger in `.github/workflows/deploy.yml` already permits. Confirm the build job fails at the schema parse, the deploy job is skipped rather than run, and the live page is unchanged. Delete the branch afterwards (FR-013, SC-008)
+- [ ] T038 [US3] Edit `description` in `src/data/site.md` via the GitHub web editor, commit to `main`, and confirm the change is live within five minutes with no manual step anywhere in the chain (SC-003, FR-011, FR-014)
 
 **Checkpoint**: US2 and US3 both work independently. The site is live and casually editable.
 

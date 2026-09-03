@@ -117,7 +117,7 @@ written against.
 **Rationale**: This satisfies FR-013 with zero new dependencies. Content collections were the
 obvious tool and are explicitly excluded by Principle I, since a collection for a single document is
 schema for content that does not exist. Frontmatter beats a JSON data file for FR-011, because JSON
-punishes a phone edit with a trailing comma, while frontmatter tolerates loose spacing and reads as
+punishes a hurried edit with a trailing comma, while frontmatter tolerates loose spacing and reads as
 prose.
 
 **Alternatives considered**: Installing `zod` directly was rejected as a needless dependency and a
