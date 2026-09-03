@@ -56,8 +56,7 @@ browser warning.
 User Story 1. This is the difference between a site that exists and a site that is reachable.
 
 **Independent Test**: From a browser with no cache, request the secure address, the insecure address,
-the `www` form, and the previous GitHub-hosted address. All four arrive at the same page with a valid
-certificate and no warning.
+and the `www` form. All three arrive at the same page with a valid certificate and no warning.
 
 **Acceptance Scenarios**:
 
@@ -65,8 +64,8 @@ certificate and no warning.
    page is served with a valid certificate and no interstitial warning.
 2. **Given** a visitor entering the insecure address or the `www` form, **When** the request
    completes, **Then** they arrive at the single canonical secure address.
-3. **Given** an existing inbound link to the previous GitHub-hosted address, **When** it is followed,
-   **Then** the visitor arrives at the new page rather than the 2021 content.
+3. **Given** an existing inbound link to the previous GitHub-hosted project path, **When** it is
+   followed, **Then** the visitor arrives at the new page rather than the 2021 content.
 4. **Given** the site is shared in a message or social post, **When** the preview renders, **Then** a
    title, a short description, and an image appear rather than a bare URL.
 
@@ -191,8 +190,9 @@ followed and each one reaches a live page belonging to Joe.
 - **FR-016**: The site MUST be served at `https://joeburkinshaw.com` with a valid certificate.
 - **FR-017**: The insecure address and the `www` form MUST both arrive at the single canonical
   secure address.
-- **FR-018**: Existing inbound links to the previous GitHub-hosted address MUST arrive at the new
-  page.
+- **FR-018**: Existing inbound links to the previous GitHub-hosted *project* path,
+  `jburkinshaw.github.io/personal-site/`, MUST arrive at the new page. The bare user-site address,
+  `jburkinshaw.github.io`, is out of scope: see the assumption on retiring the old repository.
 - **FR-019**: The previous site's tracking identifier MUST NOT be carried over in any form, and no
   replacement analytics may be introduced in this version.
 - **FR-020**: Every displayed link and any displayed contact address MUST be confirmed as live and
@@ -235,8 +235,9 @@ followed and each one reaches a live page belonging to Joe.
   publication.
 - **SC-005**: The page can be read and operated start to finish using a keyboard alone, and an
   automated accessibility audit reports zero violations.
-- **SC-006**: The secure address, the insecure address, the `www` form, and the previous
-  GitHub-hosted address all arrive at the same page with a valid certificate and no browser warning.
+- **SC-006**: The secure address, the insecure address, and the `www` form all arrive at the same
+  page with a valid certificate and no browser warning. The previous GitHub-hosted project path
+  forwards there too.
 - **SC-007**: The page makes zero requests to origins outside the owner's control, so no consent
   notice is required.
 - **SC-008**: Every malformed content edit is caught before publication, and no such edit has ever
@@ -278,5 +279,12 @@ followed and each one reaches a live page belonging to Joe.
   visitor data of any kind is collected or stored.
 - **Modern browsers only.** Current versions of the major desktop and mobile browsers are supported.
   No support is planned for browsers that are no longer receiving updates.
+- **The old repository is unpublished, not redirected.** On 2026-09-03 the owner deleted the old
+  repository's `CNAME`, set its Pages source to None, and archived it, so the bare
+  `jburkinshaw.github.io` address now returns 404 rather than forwarding. A redirect page was
+  considered and declined as not worth unarchiving for. This is why FR-018 is scoped to the project
+  path, which GitHub forwards automatically once a custom domain is set. **To reverse:** unarchive
+  the old repository, add a redirecting `index.html`, re-enable Pages, re-archive.
+
 - **The link set stays small.** A handful of links is expected. Nothing here needs to work well at
   fifty.

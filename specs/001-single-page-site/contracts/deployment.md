@@ -129,7 +129,10 @@ All four must resolve to the same page, with a valid certificate and no browser 
 - `https://joeburkinshaw.com`
 - `http://joeburkinshaw.com`
 - `https://www.joeburkinshaw.com`
-- `https://jburkinshaw.github.io`
+- `https://jburkinshaw.github.io/personal-site/`
+
+The bare `https://jburkinshaw.github.io` returns 404 by decision: the old repository was
+unpublished rather than given a redirect. See the spec's assumptions.
 
 Plus: zero requests to origins outside the owner's control (SC-007), and the page complete and
 readable with images blocked, styling disabled and scripting disabled (SC-009).

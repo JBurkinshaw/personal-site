@@ -83,27 +83,26 @@ user story has shipped yet.
 `https://joeburkinshaw.com` over HTTPS, with every form of the address arriving at the same place.
 
 **Independent Test**: From a cold browser, request the secure address, the insecure address, the
-`www` form and `jburkinshaw.github.io`. All four reach the new page with a valid certificate and no
-warning.
+`www` form. All three reach the new page with a valid certificate and no warning.
 
 ### Implementation
 
 - [X] T022 [US2] Create `src/pages/index.astro` using `Base.astro`, rendering `profile.name` as the single `<h1>` and one line stating the site is being rebuilt. No stand-in photograph, no placeholder prose posing as a bio, no ornament. Values come from tokens only (FR-021, Principle VI)
 - [X] T023 [P] [US2] Create `public/CNAME` containing exactly `joeburkinshaw.com` with no scheme, no trailing slash and a single trailing newline
-- [ ] T024 [US2] Push to `main` and confirm the workflow runs both jobs, that all four gates pass, and that the artifact deploys with no manual build or upload step (FR-014). Confirm the site is live at `jburkinshaw.github.io` before touching DNS, so the cutover is not pointing a domain at a broken build
+- [X] T024 [US2] Push to `main` and confirm the workflow runs both jobs, that all four gates pass, and that the artifact deploys with no manual build or upload step (FR-014). Confirm the site is live at `jburkinshaw.github.io` before touching DNS, so the cutover is not pointing a domain at a broken build
 
 ### Cutover: OWNER, manual, strictly in this order
 
 The order is a hard dependency. Full detail in contracts/deployment.md.
 
-- [ ] T025 [US2] **OWNER** Delete the `CNAME` file from `JBurkinshaw/jburkinshaw.github.io`, then archive that repository, per contracts/deployment.md Step 1. This must happen before T027, because GitHub scopes a custom domain to one repository and will reject the domain here while that file exists. **This has no undo: it retires the 2021 site permanently**
-- [ ] T026 [US2] **OWNER** At Hover, on the `joeburkinshaw.com` zone, per contracts/deployment.md Step 2: delete apex A records `192.30.252.153` and `192.30.252.154`, **delete the existing `www` A record `192.30.252.154`**, add apex A records `185.199.108.153`, `185.199.109.153`, `185.199.110.153` and `185.199.111.153`, then add a `www` CNAME to `jburkinshaw.github.io`. The `www` A record must go first: DNS forbids a CNAME coexisting with an A record at the same name
+- [X] T025 [US2] **OWNER** Delete the `CNAME` file from `JBurkinshaw/jburkinshaw.github.io`, then archive that repository, per contracts/deployment.md Step 1. This must happen before T027, because GitHub scopes a custom domain to one repository and will reject the domain here while that file exists. **This has no undo: it retires the 2021 site permanently**
+- [X] T026 [US2] **OWNER** At Hover, on the `joeburkinshaw.com` zone, per contracts/deployment.md Step 2: delete apex A records `192.30.252.153` and `192.30.252.154`, **delete the existing `www` A record `192.30.252.154`**, add apex A records `185.199.108.153`, `185.199.109.153`, `185.199.110.153` and `185.199.111.153`, then add a `www` CNAME to `jburkinshaw.github.io`. The `www` A record must go first: DNS forbids a CNAME coexisting with an A record at the same name
 - [ ] T027 [US2] **OWNER** In this repository's settings, per contracts/deployment.md Step 3: set Pages source to **GitHub Actions**, set the custom domain to `joeburkinshaw.com`, wait for certificate provisioning, then enable **Enforce HTTPS**. Provisioning can take up to 24 hours and a failure inside that window is expected, not a defect
-- [ ] T028 [US2] Verify propagation with `dig +short joeburkinshaw.com A` returning only the four `185.199.10x.153` addresses, and `dig +short www.joeburkinshaw.com` resolving through the CNAME
+- [X] T028 [US2] Verify propagation with `dig +short joeburkinshaw.com A` returning only the four `185.199.10x.153` addresses, and `dig +short www.joeburkinshaw.com` resolving through the CNAME
 
 ### Verification
 
-- [ ] T029 [P] [US2] Run quickstart V1.8: the secure address serves with a valid certificate (FR-016), the insecure and `www` forms both arrive at the canonical secure address (FR-017), and `jburkinshaw.github.io` arrives at the new page rather than 2021 content (FR-018). All four, no warning (SC-006)
+- [ ] T029 [P] [US2] Run quickstart V1.8: the secure address serves with a valid certificate (FR-016), the insecure and `www` forms both arrive at the canonical secure address (FR-017), and `jburkinshaw.github.io/personal-site/` forwards to the new page (FR-018). No warning on any of them (SC-006). The bare `jburkinshaw.github.io` returns 404 by decision and is not checked
 - [ ] T030 [P] [US2] Run quickstart V1.9 with the browser network panel open: every request goes to `joeburkinshaw.com`, zero third-party origins, therefore no consent notice needed (FR-010, SC-007)
 - [ ] T031 [P] [US2] Run quickstart V1.6: the page stays readable and complete with images blocked, with CSS disabled, and with JavaScript disabled (FR-005, SC-009)
 - [ ] T032 [P] [US2] Run quickstart V1.7: legible in both light and dark with no flash and no JavaScript, and legible if `light-dark()` is unsupported, which the duplicate token declaration provides (FR-007)

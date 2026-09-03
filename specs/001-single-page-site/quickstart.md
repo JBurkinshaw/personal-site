@@ -90,7 +90,7 @@ JavaScript involved (FR-007). Then confirm the fallback: colours must still be l
 curl -sSI https://joeburkinshaw.com | head -1
 curl -sSI http://joeburkinshaw.com | head -1
 curl -sSI https://www.joeburkinshaw.com | head -1
-curl -sSI https://jburkinshaw.github.io | head -1
+curl -sSI https://jburkinshaw.github.io/personal-site/ | head -1
 ```
 
 Expected: all four reach the new page, secure, with no certificate warning (SC-006). Run this only
