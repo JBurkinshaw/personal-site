@@ -127,7 +127,7 @@ web browser and confirm it is live without any further action.
 - [X] T035 [US3] Write `README.md` in under twenty lines covering how to change the bio, swap the photograph, and add a link, referencing `src/data/site.md` as the only file to edit (FR-015)
 - [X] T036 [US3] Run quickstart V1.4 by hand: delete the `name` line from `src/data/site.md`, run `npm run build`, and confirm a non-zero exit naming `name` as missing. Restore it and confirm the build passes (FR-013, SC-008)
 - [X] T037 [US3] Commit the malformed `src/data/site.md` from T036 to a throwaway branch, then trigger the workflow against it with `gh workflow run deploy.yml --ref <branch>`, which the `workflow_dispatch` trigger in `.github/workflows/deploy.yml` already permits. Confirm the build job fails at the schema parse, the deploy job is skipped rather than run, and the live page is unchanged. Delete the branch afterwards (FR-013, SC-008)
-- [ ] T038 [US3] Edit `description` in `src/data/site.md` via the GitHub web editor, commit to `main`, and confirm the change is live within five minutes with no manual step anywhere in the chain (SC-003, FR-011, FR-014)
+- [X] T038 [US3] Edit `description` in `src/data/site.md` via the GitHub web editor, commit to `main`, and confirm the change is live within five minutes with no manual step anywhere in the chain (SC-003, FR-011, FR-014)
 
 **Checkpoint**: US2 and US3 both work independently. The site is live and casually editable.
 
@@ -146,23 +146,23 @@ them.
 
 ### Composition
 
-- [ ] T039 [US1] Build the final composition in `src/pages/index.astro` and its scoped `<style>` block: one column, a 60 to 75 character measure, asymmetric rather than centred, all spacing from the Stage 1 token scale built in T012. Hairline rules rather than boxes, zero border radius, no shadows, no gradients (Principle VI)
-- [ ] T040 [US1] Extend the schema in `src/lib/site.ts` to require `role`, `location`, `photo` and `photoAlt`, require `photoAlt` to differ from `name`, and treat the Markdown body as the bio. Remove `provisional` from the schema entirely rather than defaulting it false, per data-model.md's one-way state transition
+- [X] T039 [US1] Build the final composition in `src/pages/index.astro` and its scoped `<style>` block: one column, a 60 to 75 character measure, asymmetric rather than centred, all spacing from the Stage 1 token scale built in T012. Hairline rules rather than boxes, zero border radius, no shadows, no gradients (Principle VI)
+- [X] T040 [US1] Extend the schema in `src/lib/site.ts` to require `role`, `location`, `photo` and `photoAlt`, require `photoAlt` to differ from `name`, and treat the Markdown body as the bio. Remove `provisional` from the schema entirely rather than defaulting it false, per data-model.md's one-way state transition
 
 ### Content, OWNER-dependent
 
-- [ ] T041 [US1] **OWNER** Supply the photograph and the final bio copy. The old site's description is a starting point, with its "enthsiast" typo corrected
-- [ ] T042 [US1] Add the photograph to `src/assets/` and render it through `astro:assets` as `<picture>` with WebP plus a raster fallback and intrinsic dimensions so it reserves its own space and causes no layout shift (FR-002)
-- [ ] T043 [US1] Populate `src/data/site.md` with `role`, `location`, `photo`, `photoAlt` and the bio body, and remove the `provisional` key (FR-003, FR-021)
-- [ ] T044 [US1] Add a share-preview image and wire it into `Base.astro`'s Open Graph and Twitter card tags (FR-009, data-model.md `previewImage`)
+- [X] T041 [US1] **OWNER** Supply the photograph and the final bio copy. The old site's description is a starting point, with its "enthsiast" typo corrected
+- [X] T042 [US1] Add the photograph to `src/assets/` and render it through `astro:assets` as `<picture>` with WebP plus a raster fallback and intrinsic dimensions so it reserves its own space and causes no layout shift (FR-002)
+- [X] T043 [US1] Populate `src/data/site.md` with `role`, `location`, `photo`, `photoAlt` and the bio body, and remove the `provisional` key (FR-003, FR-021)
+- [X] T044 [US1] Add a share-preview image and wire it into `Base.astro`'s Open Graph and Twitter card tags (FR-009, data-model.md `previewImage`)
 
 ### Verification
 
 - [ ] T045 [P] [US1] Run quickstart V2.1: no horizontal scrolling at 320px or at a wide desktop width, and no body line beyond roughly 75 characters (FR-008)
 - [ ] T046 [P] [US1] Run quickstart V2.2: the whole page traversable by keyboard with a clearly visible focus indicator (FR-006, and the keyboard half of SC-005)
-- [ ] T047 [P] [US1] Run quickstart V2.5: confirm no raw colour, size or spacing literal appears in any component style block. Every value comes from a token (Principle VI)
+- [X] T047 [P] [US1] Run quickstart V2.5: confirm no raw colour, size or spacing literal appears in any component style block. Every value comes from a token (Principle VI)
 - [ ] T048 [US1] Run quickstart V2.3, a Lighthouse mobile audit: 100 for Accessibility, Best Practices and SEO, Performance at 95 or above. Accessibility at 100 is the automated-audit half of SC-005. Record the four scores in this task, since this is the manual half of Principle VII per plan.md's Complexity Tracking. Record First Contentful Paint and Largest Contentful Paint from the same throttled run and check both against SC-002's 1s-readable and 3s-complete targets, since the byte budgets are a proxy for those rather than a measurement of them (SC-002)
-- [ ] T049 [US1] Run `node scripts/check-budgets.mjs`: photograph under 150KB, total under 250KB, HTML plus CSS under 20KB, zero JavaScript (SC-002 budgets)
+- [X] T049 [US1] Run `node scripts/check-budgets.mjs`: photograph under 150KB, total under 250KB, HTML plus CSS under 20KB, zero JavaScript (SC-002 budgets)
 - [ ] T050 [US1] Run quickstart V3.1 with five people who have not met Joe. All five state his profession and location after ten seconds (SC-001)
 
 **Checkpoint**: US1 complete. The site does the job it exists for.

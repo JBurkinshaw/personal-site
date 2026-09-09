@@ -1,47 +1,84 @@
 ---
+import { Picture } from "astro:assets";
 import Base from "../layouts/Base.astro";
-import { profile } from "../lib/site";
+import { Bio, profile } from "../lib/site";
 ---
 
 <Base>
   <main>
     <h1>{profile.name}</h1>
-    {
-      profile.provisional && (
-        <p class="notice">
-          This site is being rebuilt. A proper introduction is on its way.
-        </p>
-      )
-    }
+    <p class="role">{profile.role}</p>
+    <p class="location">{profile.location}</p>
+
+    <Picture
+      src={profile.photo}
+      alt={profile.photoAlt}
+      width={272}
+      densities={[2]}
+      formats={["webp"]}
+      fallbackFormat="jpeg"
+      loading="eager"
+      class="portrait"
+    />
+
+    <div class="bio">
+      <Bio />
+    </div>
   </main>
 </Base>
 
 <style>
   /*
-    Stage 1 holds no final composition, only enough to exercise the tokens.
-    The measure, scale and asymmetry arrive in Stage 2. Every value here comes
-    from src/styles/global.css.
+    Composition per Principle VI. Every value comes from the token sheet in
+    src/styles/global.css.
+
+    Asymmetric rather than centred: the text block is anchored left with a wide,
+    viewport-scaled leading margin and a narrow trailing one, so it sits off
+    centre on any width instead of floating in the middle. The measure caps the
+    line length independently, which keeps reading comfortable on a wide display
+    without pushing the block into the centre.
   */
   main {
-    max-width: var(--measure);
-    padding: var(--space-7) var(--space-4) var(--space-6);
-    margin-inline: 0;
-    padding-inline-start: max(var(--space-4), 6vw);
+    max-inline-size: var(--measure);
+    padding-block: clamp(var(--space-6), 14vh, var(--space-7)) var(--space-6);
+    padding-inline: max(var(--space-4), 8vw) var(--space-4);
   }
 
   h1 {
     font-size: var(--text-xl);
     font-weight: var(--weight-medium);
     line-height: var(--leading-tight);
-    letter-spacing: -0.015em;
+    /* Neo-grotesques set tighter at display sizes; this is optical, not decorative. */
+    letter-spacing: var(--tracking-tight);
   }
 
-  .notice {
-    margin-block-start: var(--space-4);
-    padding-block-start: var(--space-4);
-    border-block-start: 1px solid var(--colour-rule);
-    color: var(--colour-secondary);
+  .role {
+    margin-block-start: var(--space-2);
     font-size: var(--text-lg);
-    max-width: 34ch;
+    max-inline-size: var(--measure-short);
+  }
+
+  .location {
+    margin-block-start: var(--space-1);
+    color: var(--colour-secondary);
+    font-size: var(--text-sm);
+  }
+
+  /*
+    A hairline rule rather than a box or a card, carrying the break between the
+    identifying block above and the portrait and prose below. No border radius,
+    no shadow: the photograph is a rectangle because it is a rectangle.
+  */
+  .portrait {
+    inline-size: var(--photo-width);
+    max-inline-size: 100%;
+    height: auto;
+    margin-block-start: var(--space-5);
+    padding-block-start: var(--space-5);
+    border-block-start: var(--rule-width) solid var(--colour-rule);
+  }
+
+  .bio {
+    margin-block-start: var(--space-5);
   }
 </style>

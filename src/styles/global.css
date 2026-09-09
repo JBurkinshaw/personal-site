@@ -47,6 +47,15 @@
 
   /* Measure, within the 60 to 75 character band */
   --measure: 68ch;
+  /* A single sentence should not run the full measure */
+  --measure-short: 38ch;
+
+  /* Optical tightening for display sizes, and the hairline weight */
+  --tracking-tight: -0.02em;
+  --rule-width: 1px;
+
+  /* Portrait width. 17rem at 2x is 544px, close to the 571px source crop. */
+  --photo-width: 17rem;
 }
 
 /*
