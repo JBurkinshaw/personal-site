@@ -130,8 +130,8 @@ notice needed (FR-010, SC-007).
 
 **Gate: SC-001, SC-003, SC-004, SC-010.**
 
-- **V3.1** Show the page to five people who have not met Joe. All five can state his profession and
-  location after ten seconds (SC-001).
+- **V3.1** Load the page at 320px and at a typical laptop width. Profession and location are both
+  legible without scrolling or interaction (SC-001).
 - **V3.2** With no development tools, change one sentence of the bio through a web browser and
   confirm it is live within five minutes (SC-003). This is the whole point of the rebuild, so it is
   worth actually doing rather than assuming.

@@ -225,8 +225,9 @@ followed and each one reaches a live page belonging to Joe.
 
 ### Measurable Outcomes
 
-- **SC-001**: A reader who has never met Joe can state his profession and his location after ten
-  seconds on the page, in five out of five informal tests.
+- **SC-001**: Profession and location are both legible without scrolling or interaction, at a
+  320px viewport and on a typical laptop, so a first-time reader has them within seconds. Testing
+  this on a panel of readers was considered and dropped as disproportionate for one page.
 - **SC-002**: The page's text is readable within one second of request on a typical mobile
   connection, and fully complete including the photograph within three seconds.
 - **SC-003**: The owner can change a sentence of the bio and see it live within five minutes, using

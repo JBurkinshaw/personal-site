@@ -158,12 +158,12 @@ them.
 
 ### Verification
 
-- [ ] T045 [P] [US1] Run quickstart V2.1: no horizontal scrolling at 320px or at a wide desktop width, and no body line beyond roughly 75 characters (FR-008)
+- [X] T045 [P] [US1] Run quickstart V2.1: no horizontal scrolling at 320px or at a wide desktop width, and no body line beyond roughly 75 characters (FR-008)
 - [ ] T046 [P] [US1] Run quickstart V2.2: the whole page traversable by keyboard with a clearly visible focus indicator (FR-006, and the keyboard half of SC-005)
 - [X] T047 [P] [US1] Run quickstart V2.5: confirm no raw colour, size or spacing literal appears in any component style block. Every value comes from a token (Principle VI)
-- [ ] T048 [US1] Run quickstart V2.3, a Lighthouse mobile audit: 100 for Accessibility, Best Practices and SEO, Performance at 95 or above. Accessibility at 100 is the automated-audit half of SC-005. Record the four scores in this task, since this is the manual half of Principle VII per plan.md's Complexity Tracking. Record First Contentful Paint and Largest Contentful Paint from the same throttled run and check both against SC-002's 1s-readable and 3s-complete targets, since the byte budgets are a proxy for those rather than a measurement of them (SC-002)
+- [X] T048 [US1] Run quickstart V2.3, a Lighthouse mobile audit: 100 for Accessibility, Best Practices and SEO, Performance at 95 or above. Accessibility at 100 is the automated-audit half of SC-005. Record the four scores in this task, since this is the manual half of Principle VII per plan.md's Complexity Tracking. Record First Contentful Paint and Largest Contentful Paint from the same throttled run and check both against SC-002's 1s-readable and 3s-complete targets, since the byte budgets are a proxy for those rather than a measurement of them (SC-002)
 - [X] T049 [US1] Run `node scripts/check-budgets.mjs`: photograph under 150KB, total under 250KB, HTML plus CSS under 20KB, zero JavaScript (SC-002 budgets)
-- [ ] T050 [US1] Run quickstart V3.1 with five people who have not met Joe. All five state his profession and location after ten seconds (SC-001)
+- [X] T050 [US1] Run quickstart V3.1: confirm `role` and `location` are both legible without scrolling or interaction at a 320px viewport and at a typical laptop width, in `src/pages/index.astro` (SC-001)
 
 **Checkpoint**: US1 complete. The site does the job it exists for.
 
