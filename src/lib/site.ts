@@ -24,6 +24,37 @@ const siteSchema = z.object({
   location: z.string().trim().min(1, "must not be empty"),
   photo: z.string().trim().min(1, "must not be empty"),
   photoAlt: z.string().trim().min(1, "must not be empty"),
+  /*
+    Array order is display order. There is no separate order field, because the
+    array already has one and a second source of truth invites disagreement.
+    Defaults to empty so removing the last link is a deletion rather than a
+    build failure.
+  */
+  links: z
+    .array(
+      z.object({
+        label: z.string().trim().min(1, "must not be empty"),
+        url: z.url({
+          protocol: /^https$/,
+          error:
+            "must be an absolute https: URL, since an insecure link from a secure page is a needless downgrade",
+        }),
+      }),
+    )
+    .default([])
+    .superRefine((links, ctx) => {
+      const seen = new Set<string>();
+      for (const [index, link] of links.entries()) {
+        if (seen.has(link.url)) {
+          ctx.addIssue({
+            code: "custom",
+            path: [index, "url"],
+            message: `duplicates an earlier link to ${link.url}`,
+          });
+        }
+        seen.add(link.url);
+      }
+    }),
 });
 
 const parsed = siteSchema.safeParse(frontmatter);
@@ -85,6 +116,7 @@ export const profile = {
   location: data.location,
   photo: photoModule.default,
   photoAlt: data.photoAlt,
+  links: data.links,
 };
 
 export const metadata = {

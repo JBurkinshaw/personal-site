@@ -56,6 +56,9 @@
 
   /* Portrait width. 17rem at 2x is 544px, close to the 571px source crop. */
   --photo-width: 17rem;
+
+  /* Well under the 150ms Principle VI allows for link and focus states */
+  --transition-fast: 120ms;
 }
 
 /*
@@ -111,8 +114,11 @@ svg {
 
 a {
   color: var(--colour-accent);
-  text-decoration-thickness: 1px;
+  /* Underlined, so links are distinguishable without relying on colour alone. */
+  text-decoration-line: underline;
+  text-decoration-thickness: var(--rule-width);
   text-underline-offset: 0.2em;
+  transition: color var(--transition-fast) ease;
 }
 
 :focus-visible {
@@ -120,11 +126,12 @@ a {
   outline-offset: 3px;
 }
 
-/*
-  No prefers-reduced-motion block yet: Stage 1 ships no transitions or
-  animations, so there is nothing to disable. It arrives with the link and
-  focus transitions in Stage 2, scoped to those properties.
-*/
+/* The only motion on the page, so the only thing there is to switch off. */
+@media (prefers-reduced-motion: reduce) {
+  a {
+    transition: none;
+  }
+}
 
 body {
   background-color: var(--colour-paper);

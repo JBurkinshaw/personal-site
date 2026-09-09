@@ -159,9 +159,9 @@ them.
 ### Verification
 
 - [X] T045 [P] [US1] Run quickstart V2.1: no horizontal scrolling at 320px or at a wide desktop width, and no body line beyond roughly 75 characters (FR-008)
-- [ ] T046 [P] [US1] Run quickstart V2.2: the whole page traversable by keyboard with a clearly visible focus indicator (FR-006, and the keyboard half of SC-005)
+- [X] T046 [P] [US1] Run quickstart V2.2: the whole page traversable by keyboard with a clearly visible focus indicator (FR-006, and the keyboard half of SC-005)
 - [X] T047 [P] [US1] Run quickstart V2.5: confirm no raw colour, size or spacing literal appears in any component style block. Every value comes from a token (Principle VI)
-- [X] T048 [US1] Run quickstart V2.3, a Lighthouse mobile audit: 100 for Accessibility, Best Practices and SEO, Performance at 95 or above. Accessibility at 100 is the automated-audit half of SC-005. Record the four scores in this task, since this is the manual half of Principle VII per plan.md's Complexity Tracking. Record First Contentful Paint and Largest Contentful Paint from the same throttled run and check both against SC-002's 1s-readable and 3s-complete targets, since the byte budgets are a proxy for those rather than a measurement of them (SC-002)
+- [X] T048 [US1] Run quickstart V2.3, a Lighthouse mobile audit: 100 for Accessibility, Best Practices and SEO, Performance at 95 or above. Accessibility at 100 is the automated-audit half of SC-005. Record the four scores in this task, since this is the manual half of Principle VII per plan.md's Complexity Tracking. Record First Contentful Paint and Largest Contentful Paint from the same throttled run and check both against SC-002's 1s-readable and 3s-complete targets, since the byte budgets are a proxy for those rather than a measurement of them (SC-002). **Recorded 2026-09-09, Lighthouse 12 against the production build, emulated Moto G Power on throttled 4G: Performance 100, Accessibility 100, Best Practices 100, SEO 100. FCP 0.6s against the 1s target, LCP 1.4s against 3s, CLS 0, TBT 0ms. Desktop preset scored 100 on all four as well. Two diagnostics score zero without affecting the total: `fetchpriority=high` absent, which Lighthouse itself estimates at 0ms benefit, and image delivery, worth about 150ms of LCP. Neither is needed to meet a stated criterion, so neither was actioned.**
 - [X] T049 [US1] Run `node scripts/check-budgets.mjs`: photograph under 150KB, total under 250KB, HTML plus CSS under 20KB, zero JavaScript (SC-002 budgets)
 - [X] T050 [US1] Run quickstart V3.1: confirm `role` and `location` are both legible without scrolling or interaction at a 320px viewport and at a typical laptop width, in `src/pages/index.astro` (SC-001)
 
@@ -176,12 +176,12 @@ than no link.
 
 **Independent Test**: Follow every displayed link. Each reaches a live page belonging to Joe.
 
-- [ ] T051 [US4] Extend the schema in `src/lib/site.ts` with a `links` array of `label` and `url`, requiring absolute `https:` URLs, rejecting duplicate URLs, and allowing the array to be empty (FR-004, data-model.md)
-- [ ] T052 [US4] **OWNER** Confirm which links to display. contracts/content-schema.md assumes two, GitHub and LinkedIn, and assumes the Twitter and Instagram profiles are dropped unless confirmed active. Confirm each destination is live before it ships (FR-020)
-- [ ] T053 [US4] Add the confirmed links to `src/data/site.md` and render them in `src/pages/index.astro` as a list, with no icons, and distinguishable as links without relying on colour alone (FR-004, Principle VI). Confirm that adding one more link afterwards is a single frontmatter entry touching no other file (FR-012)
-- [ ] T054 [US4] Verify the page still renders correctly with an empty `links` array, by emptying it temporarily and rebuilding (FR-004)
-- [ ] T055 [P] [US4] Run quickstart V3.3: every displayed link reaches a live destination belonging to Joe (SC-004)
-- [ ] T056 [P] [US4] Confirm each link is keyboard-focusable with a visible indicator, and that no link label is meaningless out of context (FR-006, data-model.md)
+- [X] T051 [US4] Extend the schema in `src/lib/site.ts` with a `links` array of `label` and `url`, requiring absolute `https:` URLs, rejecting duplicate URLs, and allowing the array to be empty (FR-004, data-model.md)
+- [X] T052 [US4] **OWNER** Confirm which links to display. contracts/content-schema.md assumes two, GitHub and LinkedIn, and assumes the Twitter and Instagram profiles are dropped unless confirmed active. Confirm each destination is live before it ships (FR-020)
+- [X] T053 [US4] Add the confirmed links to `src/data/site.md` and render them in `src/pages/index.astro` as a list, with no icons, and distinguishable as links without relying on colour alone (FR-004, Principle VI). Confirm that adding one more link afterwards is a single frontmatter entry touching no other file (FR-012)
+- [X] T054 [US4] Verify the page still renders correctly with an empty `links` array, by emptying it temporarily and rebuilding (FR-004)
+- [X] T055 [P] [US4] Run quickstart V3.3: every displayed link reaches a live destination belonging to Joe (SC-004)
+- [X] T056 [P] [US4] Confirm each link is keyboard-focusable with a visible indicator, and that no link label is meaningless out of context (FR-006, data-model.md)
 
 **Checkpoint**: All four user stories independently functional.
 
@@ -189,16 +189,16 @@ than no link.
 
 ## Phase 7: Polish and Cross-Cutting Concerns
 
-- [ ] T057 [P] Re-read `README.md` against FR-015 now that links and the photograph exist, and confirm all three tasks are still findable in under twenty lines
-- [ ] T058 [P] Re-run the full quickstart Stage 2 and Stage 3 validation lists end to end, rather than trusting the per-story runs
-- [ ] T059 Confirm `provisional` appears nowhere in `src/data/site.md` or `src/lib/site.ts`, so the interim state cannot be reactivated by accident
-- [ ] T060 Re-verify plan.md's Constitution Check against the finished code, and confirm the two recorded departures in Complexity Tracking, being the omitted ESLint and the un-automated Lighthouse, are both still the right call and still accurately described
-- [ ] T061 Confirm `dependencies` still contains only `astro` and that no dev dependency arrived without its three-sentence justification in research.md (Principle III)
+- [X] T057 [P] Re-read `README.md` against FR-015 now that links and the photograph exist, and confirm all three tasks are still findable in under twenty lines
+- [X] T058 [P] Re-run the full quickstart Stage 2 and Stage 3 validation lists end to end, rather than trusting the per-story runs
+- [X] T059 Confirm `provisional` appears nowhere in `src/data/site.md` or `src/lib/site.ts`, so the interim state cannot be reactivated by accident
+- [X] T060 Re-verify plan.md's Constitution Check against the finished code, and confirm the two recorded departures in Complexity Tracking, being the omitted ESLint and the un-automated Lighthouse, are both still the right call and still accurately described
+- [X] T061 Confirm `dependencies` still contains only `astro` and that no dev dependency arrived without its three-sentence justification in research.md (Principle III)
 - [ ] T062 Consider backing up `PROJECT-BRIEF.md` and `DEFERRED-NOTES.md` outside the repository, since both are gitignored and the cutover detail and design lineage exist nowhere else
-- [ ] T063 Grep the whole repository and the built `dist/` for `UA-39902836-1`, `google-analytics`, `gtag`, `googletagmanager` and `analytics`, confirming zero matches. The dead 2021 tracking property must not be carried over in any form and no replacement may have crept in (FR-019)
-- [ ] T064 Confirm `dist/` contains exactly one HTML file and that the page has no navigation to any other page (FR-001), and confirm the absence of every v1 non-goal: no blog, CMS, portfolio, contact form, analytics, cookie notice, newsletter signup, comments, search or syndication feed (FR-022)
-- [ ] T065 Confirm a later portfolio would be additive: `src/data/site.md`'s frontmatter shape and `src/lib/site.ts`'s schema must both accommodate a new content type alongside the existing keys without renaming, restructuring or moving anything currently there. Record in this task what a portfolio would add, so the claim is checked rather than assumed (FR-023, SC-010)
-- [ ] T066 Confirm no Astro content collection and no dynamic route exists anywhere in `src/`, per Principle I and plan.md's exclusion of both from all phases
+- [X] T063 Grep the whole repository and the built `dist/` for `UA-39902836-1`, `google-analytics`, `gtag`, `googletagmanager` and `analytics`, confirming zero matches. The dead 2021 tracking property must not be carried over in any form and no replacement may have crept in (FR-019)
+- [X] T064 Confirm `dist/` contains exactly one HTML file and that the page has no navigation to any other page (FR-001), and confirm the absence of every v1 non-goal: no blog, CMS, portfolio, contact form, analytics, cookie notice, newsletter signup, comments, search or syndication feed (FR-022)
+- [X] T065 Confirm a later portfolio would be additive: `src/data/site.md`'s frontmatter shape and `src/lib/site.ts`'s schema must both accommodate a new content type alongside the existing keys without renaming, restructuring or moving anything currently there. Record in this task what a portfolio would add, so the claim is checked rather than assumed (FR-023, SC-010). **Checked 2026-09-09. A portfolio would add: a `src/content/projects/` collection with `src/content.config.ts` defining its schema, a route to render it, and a section or link on the index page. It would need nothing removed or renamed. `site.md` keeps all eight of its current keys untouched, `site.ts`'s schema is unchanged because the collection carries its own, `Base.astro` and the token sheet are reused as they stand, and a link to the portfolio is one more entry in the existing `links` array, so a data edit rather than a markup change. The one thing this version deliberately does not provide is the collection itself, per Principle I. SC-010 holds: no content produced by this version changes.**
+- [X] T066 Confirm no Astro content collection and no dynamic route exists anywhere in `src/`, per Principle I and plan.md's exclusion of both from all phases
 
 ---
 

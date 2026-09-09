@@ -24,6 +24,18 @@ import { Bio, profile } from "../lib/site";
     <div class="bio">
       <Bio />
     </div>
+
+    {
+      profile.links.length > 0 && (
+        <ul class="links">
+          {profile.links.map((link) => (
+            <li>
+              <a href={link.url}>{link.label}</a>
+            </li>
+          ))}
+        </ul>
+      )
+    }
   </main>
 </Base>
 
@@ -80,5 +92,21 @@ import { Bio, profile } from "../lib/site";
 
   .bio {
     margin-block-start: var(--space-5);
+  }
+
+  /*
+    A row of labels, no icons: Principle VI treats decorative icons as ornament,
+    and an icon here would also be a dependency or an inline SVG per link. The
+    hairline above matches the one over the portrait, so the page has one
+    repeated device rather than several.
+  */
+  .links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2) var(--space-4);
+    margin-block-start: var(--space-5);
+    padding-block-start: var(--space-4);
+    border-block-start: var(--rule-width) solid var(--colour-rule);
+    font-size: var(--text-sm);
   }
 </style>

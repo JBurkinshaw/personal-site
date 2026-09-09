@@ -9,20 +9,24 @@ One page, zero client JavaScript, published by pushing to `main`.
 
 ## Changing what the site says
 
-Everything is frontmatter in [`src/data/site.md`](src/data/site.md). Edit it in your
-editor or in the browser on GitHub, commit to `main`, and the site redeploys itself
-within a few minutes.
+Everything lives in [`src/data/site.md`](src/data/site.md): the fields below as
+frontmatter, and the bio as the prose underneath it. Edit that file in your editor or
+in the browser on GitHub, commit to `main`, and the site redeploys within a few
+minutes.
 
-| Field         | What it changes                                   |
-| ------------- | ------------------------------------------------- |
-| `name`        | The heading                                       |
-| `title`       | Browser tab and link previews                     |
-| `description` | Meta description and link previews, max 160 chars |
+| Field                  | What it changes                                        |
+| ---------------------- | ------------------------------------------------------ |
+| `name`                 | The heading                                            |
+| `title`, `description` | Browser tab and link previews, `description` max 160   |
+| `role`, `location`     | The two lines under the heading                        |
+| `photo`, `photoAlt`    | Portrait filename, and what the picture shows          |
+| `links`                | Label and `https` URL pairs, shown in the listed order |
+
+To swap the portrait, put a new file in [`src/assets/`](src/assets/) and change
+`photo` to its filename. To add a link, append another `label` and `url` pair.
 
 Get it wrong and the build fails instead of publishing, so the live site stays as it
 was. The Actions tab names the offending field.
-
-The photograph, bio prose and external links are not wired up yet.
 
 ## Stack
 

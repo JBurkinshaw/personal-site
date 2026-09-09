@@ -218,11 +218,23 @@ if (supportsAt === -1) {
 
 /*
   FR-010 and SC-007: zero requests to origins outside the owner's control.
-  xmlns values are namespace identifiers rather than fetched resources, so they
-  are stripped before scanning.
+
+  Only attributes that actually cause the browser to fetch something count:
+  src, srcset, href on <link>, and url() or @import inside CSS. An <a href> is
+  explicitly not one of them, because it fetches nothing until a visitor
+  chooses to click it, and outbound links are the point of the page. xmlns
+  values are namespace identifiers rather than resources, so they are stripped
+  before scanning.
 */
-const SCANNABLE = new Set([".html", ".css", ".svg", ".xml", ".txt", ".json"]);
+const SCANNABLE = new Set([".html", ".css", ".svg", ".xml"]);
 const ALLOWED_HOSTS = new Set(["joeburkinshaw.com", "www.joeburkinshaw.com"]);
+
+const FETCH_PATTERNS = [
+  /\b(?:src|srcset)\s*=\s*"([^"]+)"/gi,
+  /<link\b[^>]*?\bhref\s*=\s*"([^"]+)"/gi,
+  /url\(\s*['"]?([^'")]+)['"]?\s*\)/gi,
+  /@import\s+(?:url\()?\s*['"]([^'"]+)['"]/gi,
+];
 
 const external = [];
 for (const file of files.filter((f) => SCANNABLE.has(extname(f.path)))) {
@@ -230,14 +242,21 @@ for (const file of files.filter((f) => SCANNABLE.has(extname(f.path)))) {
     /xmlns(:[a-z]+)?="[^"]*"/g,
     "",
   );
-  for (const match of text.matchAll(/(?:https?:)?\/\/([a-zA-Z0-9._-]+)/g)) {
-    if (!ALLOWED_HOSTS.has(match[1]))
-      external.push(`${file.path} references ${match[0]}`);
+  for (const pattern of FETCH_PATTERNS) {
+    for (const match of text.matchAll(pattern)) {
+      for (const candidate of match[1].split(",")) {
+        const url = candidate.trim().split(/\s+/)[0];
+        const host = url.match(/^(?:https?:)?\/\/([a-zA-Z0-9._-]+)/)?.[1];
+        if (host && !ALLOWED_HOSTS.has(host)) {
+          external.push(`${file.path} fetches ${url}`);
+        }
+      }
+    }
   }
 }
 if (external.length > 0) {
   failures.push(
-    "references to origins outside joeburkinshaw.com:\n" +
+    "the page fetches resources from origins outside joeburkinshaw.com:\n" +
       external.map((e) => `    ${e}`).join("\n"),
   );
 }

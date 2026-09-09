@@ -77,12 +77,23 @@ anticipated within this feature.
 | III. Platform Over Packages | Production dependencies empty beyond `astro`; every dev dependency justified | **PASS.** Four dev dependencies, each justified in `research.md` section 5. No dedicated linter, which constitution v1.0.1 permits provided the decision is recorded; research.md section 5 records it. |
 | IV. Publish By Push | One push publishes; clean-clone buildable; failing build blocks deploy; manual steps recorded as owner tasks | **PASS.** `npm ci && npm run build` from a clean clone, no secrets. The workflow's build step gates the deploy step. The three cutover steps are one-time infrastructure, explicitly recorded as owner tasks per this principle's own clause rather than hidden. |
 | V. Content Is Editable Without Reading Code | Content in data or Markdown with typed frontmatter; browser-editable; malformed edit fails the build | **PASS.** One Markdown file, frontmatter only, no code. `safeParse` failure exits non-zero with the offending field named, satisfying FR-013. Adding a link is one list entry, satisfying FR-012. |
-| VI. Restraint Is The Design | Tokens only, near-monochrome, no ornament, reduced-motion honoured | **PARTIAL BY DESIGN.** Stage 1 ships the token sheet; composition is Stage 2, so this principle is only fully assessable at Stage 2 exit. Stage 1's provisional page is still bound by it: no ornament, no motion, tokens only. |
+| VI. Restraint Is The Design | Tokens only, near-monochrome, no ornament, reduced-motion honoured | **PASS**, upgraded from PARTIAL once the composition shipped. Built CSS contains zero box-shadow, border-radius, gradient, filter or animation declarations. One typeface via the system stack, two weights, four sizes, four colour tokens plus a rule derived from ink. Worst contrast 6.70:1 against a 4.5:1 floor. The only motion is a 120ms link colour transition, switched off under `prefers-reduced-motion`. No raw colour, size or spacing literal in any component. |
 | VII. Quality Is Measured, Not Asserted | Numeric budgets, accessibility floor, type and build gate, all CI-enforced | **PASS with a recorded departure.** Byte budgets and the type and build gates run in CI from Stage 1. Lighthouse is not automated; see Complexity Tracking. |
 
 **Post-design re-check (after Phase 1 artifacts):** no verdict changed. The design added no
 dependency, no client JavaScript, and no abstraction beyond the single data module already accounted
 for above.
+
+**Post-implementation re-check (2026-09-09, all four user stories complete):** verified against the
+built output rather than the source. Principle VI moved from PARTIAL to PASS. Principle I holds:
+still one page, no collections, no dynamic routes, and the unused `Props` interface that had crept
+into the layout was removed as structure ahead of a second use case. Principle II holds at zero
+JavaScript files emitted, and the third-party check was corrected after it wrongly flagged outbound
+`<a href>` links, which fetch nothing until clicked. Principle III holds with `astro` the only
+production dependency. Principles IV and V hold, both exercised for real: a browser-only content
+edit reached the live site, and a malformed edit failed CI with the deploy job skipped rather than
+merely failed, leaving the live page byte-identical. Principle VII holds, with the one departure
+below and with two measurement bugs fixed in `scripts/check-budgets.mjs` rather than worked around.
 
 ## Project Structure
 
