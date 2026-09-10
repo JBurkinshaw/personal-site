@@ -2,114 +2,170 @@
 import { Picture } from "astro:assets";
 import Base from "../layouts/Base.astro";
 import { Bio, profile } from "../lib/site";
+
+const [firstName, ...surname] = profile.name.split(" ");
 ---
 
 <Base>
   <main>
-    <h1>{profile.name}</h1>
-    <p class="role">{profile.role}</p>
-    <p class="location">{profile.location}</p>
+    <h1><span>{firstName}</span><span>{surname.join(" ")}</span></h1>
 
-    <Picture
-      src={profile.photo}
-      alt={profile.photoAlt}
-      width={272}
-      densities={[2]}
-      formats={["webp"]}
-      fallbackFormat="jpeg"
-      loading="eager"
-      class="portrait"
-    />
+    <div class="bar" aria-hidden="true"></div>
 
-    <div class="bio">
-      <Bio />
+    <ul class="meta">
+      <li>
+        <svg class="mark" viewBox="0 0 12 16" aria-hidden="true">
+          <circle cx="6" cy="8" r="4.2"></circle>
+        </svg>{profile.role}
+      </li>
+      <li>
+        <a href={profile.locationMapUrl} target="_blank" rel="noopener">
+          <svg
+            class="mark"
+            viewBox="0 0 12 16"
+            fill-rule="evenodd"
+            aria-hidden="true"
+          >
+            <path
+              d="M6 0a6 6 0 0 0-6 6c0 4.2 6 10 6 10s6-5.8 6-10a6 6 0 0 0-6-6zm0 8.4A2.4 2.4 0 1 1 6 3.6a2.4 2.4 0 0 1 0 4.8z"
+            ></path>
+          </svg><span class="place">{profile.location}</span><span
+            class="visually-hidden"
+          >
+            (opens in a new tab)</span
+          >
+        </a>
+      </li>
+    </ul>
+
+    <div class="body">
+      <Picture
+        src={profile.photo}
+        alt={profile.photoAlt}
+        width={256}
+        densities={[2]}
+        formats={["webp"]}
+        fallbackFormat="jpeg"
+        loading="eager"
+        class="portrait"
+      />
+      <div>
+        <div class="bio"><Bio /></div>
+        {
+          profile.links.length > 0 && (
+            <ul class="links">
+              {profile.links.map((link) => (
+                <li>
+                  <a href={link.url} target="_blank" rel="noopener">
+                    {link.label}
+                    <span class="visually-hidden">(opens in a new tab)</span>
+                  </a>
+                </li>
+              ))}
+            </ul>
+          )
+        }
+      </div>
     </div>
-
-    {
-      profile.links.length > 0 && (
-        <ul class="links">
-          {profile.links.map((link) => (
-            <li>
-              <a href={link.url} target="_blank" rel="noopener">
-                {link.label}
-                <span class="visually-hidden">(opens in a new tab)</span>
-              </a>
-            </li>
-          ))}
-        </ul>
-      )
-    }
   </main>
 </Base>
 
 <style>
-  /*
-    Composition per Principle VI. Every value comes from the token sheet in
-    src/styles/global.css.
-
-    Asymmetric rather than centred: the text block is anchored left with a wide,
-    viewport-scaled leading margin and a narrow trailing one, so it sits off
-    centre on any width instead of floating in the middle. The measure caps the
-    line length independently, which keeps reading comfortable on a wide display
-    without pushing the block into the centre.
-  */
+  /* Anchored left with a viewport-scaled leading margin, so the block sits off
+     centre at any width rather than floating in the middle. */
   main {
-    max-inline-size: var(--measure);
-    padding-block: clamp(var(--space-6), 14vh, var(--space-7)) var(--space-6);
-    padding-inline: max(var(--space-4), 8vw) var(--space-4);
+    max-width: var(--content-max);
+    padding-block: clamp(var(--space-6), 9vh, var(--space-7)) var(--space-7);
+    padding-inline: max(var(--space-3), 6vw) var(--space-3);
   }
 
+  /* Lowercase after Bayer, who set the Bauhaus press in lowercase only */
   h1 {
     font-size: var(--text-xl);
     font-weight: var(--weight-medium);
     line-height: var(--leading-tight);
-    /* Neo-grotesques set tighter at display sizes; this is optical, not decorative. */
     letter-spacing: var(--tracking-tight);
+    text-transform: lowercase;
   }
 
-  .role {
-    margin-block-start: var(--space-2);
-    font-size: var(--text-lg);
-    max-inline-size: var(--measure-short);
+  h1 span {
+    display: block;
   }
 
-  .location {
+  /* The one heavy element on the page. Structure, not ornament. */
+  .bar {
+    width: min(var(--bar-width), 100%);
+    height: var(--bar-height);
+    background-color: var(--colour-red);
+    margin-block: var(--space-4);
+  }
+
+  /* Two marked lines: the circle marks the role, the pin marks the place and
+     signals that its link opens a map. Primitives as structure, not icons
+     accompanying text. */
+  .meta {
+    max-width: 48ch;
+    padding-inline-start: calc(var(--mark-width) + var(--mark-gap));
+  }
+
+  .meta li {
+    /* Hanging indent, so wrapped lines align with the text, not the mark */
+    text-indent: calc(-1 * (var(--mark-width) + var(--mark-gap)));
+    text-wrap: pretty;
+  }
+
+  .meta li + li {
     margin-block-start: var(--space-1);
-    color: var(--colour-secondary);
-    font-size: var(--text-sm);
   }
 
-  /*
-    A hairline rule rather than a box or a card, carrying the break between the
-    identifying block above and the portrait and prose below. No border radius,
-    no shadow: the photograph is a rectangle because it is a rectangle.
-  */
-  .portrait {
-    inline-size: var(--photo-width);
-    max-inline-size: 100%;
+  .mark {
+    display: inline-block;
+    width: var(--mark-width);
     height: auto;
-    margin-block-start: var(--space-5);
-    padding-block-start: var(--space-5);
-    border-block-start: var(--rule-width) solid var(--colour-rule);
+    margin-inline-end: var(--mark-gap);
+    fill: var(--colour-blue);
+    vertical-align: -0.07em;
+    text-indent: 0;
+  }
+
+  .place {
+    white-space: nowrap;
+  }
+
+  .body {
+    display: grid;
+    grid-template-columns: var(--photo-width) minmax(0, 1fr);
+    gap: var(--space-6);
+    align-items: start;
+    margin-block-start: var(--space-6);
+  }
+
+  .portrait {
+    width: 100%;
+    height: auto;
   }
 
   .bio {
-    margin-block-start: var(--space-5);
+    max-width: var(--measure);
   }
 
-  /*
-    A row of labels, no icons: Principle VI treats decorative icons as ornament,
-    and an icon here would also be a dependency or an inline SVG per link. The
-    hairline above matches the one over the portrait, so the page has one
-    repeated device rather than several.
-  */
   .links {
     display: flex;
     flex-wrap: wrap;
-    gap: var(--space-2) var(--space-4);
-    margin-block-start: var(--space-5);
-    padding-block-start: var(--space-4);
-    border-block-start: var(--rule-width) solid var(--colour-rule);
-    font-size: var(--text-sm);
+    gap: var(--space-1) var(--space-5);
+    margin-block-start: var(--space-4);
+    font-size: var(--text-lg);
+  }
+
+  /* A literal: var() is not valid in a media query condition */
+  @media (max-width: 48rem) {
+    .body {
+      grid-template-columns: minmax(0, 1fr);
+      gap: var(--space-5);
+    }
+
+    .portrait {
+      width: min(var(--photo-width), 100%);
+    }
   }
 </style>

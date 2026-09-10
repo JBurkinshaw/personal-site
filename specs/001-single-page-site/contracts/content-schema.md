@@ -9,30 +9,15 @@ frontmatter or prose. Nothing in it is code.
 
 ---
 
-## Stage 1 shape
+## Shape
 
 ```markdown
 ---
 name: Joe Burkinshaw
-title: Joe Burkinshaw
-description: Geospatial specialist and software developer. Site being rebuilt.
-provisional: true
----
-```
-
-The body is empty at Stage 1. The page renders its declared interim state.
-
-## Stage 3 shape
-
-```markdown
----
-name: Joe Burkinshaw
-title: Joe Burkinshaw
-description: Geospatial specialist, software developer and map guy in Squamish, BC.
-role: Geospatial specialist and software developer
+role: Technical leader, senior full-stack developer and geospatial expert
 location: Squamish, British Columbia
-photo: ../assets/joe.jpg
-photoAlt: Joe Burkinshaw standing on a forest trail, mountains behind him
+photo: joe.jpg
+photoAlt: Black and white head and shoulders photograph of Joe Burkinshaw smiling, with a forest behind him
 links:
   - label: GitHub
     url: https://github.com/JBurkinshaw
@@ -40,12 +25,18 @@ links:
     url: https://ca.linkedin.com/in/joeburkinshaw
 ---
 
-Joe Burkinshaw is a geospatial specialist, software developer, map guy and
-outdoor enthusiast based in Squamish, British Columbia.
+The bio, as prose. The page renders the Markdown body below the frontmatter.
 ```
 
-`provisional` is removed rather than set to `false`, so the interim state cannot be left switched on
-by accident.
+`description` is the only optional field. Omitted, it becomes `role` in `location`; add it only to
+say something else.
+
+Two things are derived rather than stored, so there is no second value to keep in step: the page
+title, which equals `name`, and the map link behind `location`, which is that string encoded into
+Google's Maps URLs form.
+
+An earlier interim shape carried `title` and `provisional` fields. Both are gone and the schema now
+rejects them. The interim state is recorded in the spec's assumptions, not here.
 
 ---
 

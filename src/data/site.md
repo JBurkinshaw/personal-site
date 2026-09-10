@@ -1,7 +1,5 @@
 ---
 name: Joe Burkinshaw
-title: Joe Burkinshaw
-description: Technical leader, senior full-stack developer and geospatial expert in Squamish, British Columbia.
 role: Technical leader, senior full-stack developer and geospatial expert
 location: Squamish, British Columbia
 photo: joe.jpg

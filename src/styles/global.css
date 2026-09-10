@@ -1,82 +1,84 @@
 /*
   Design tokens and reset.
 
-  light-dark() is Baseline newly available rather than widely available, so the
-  colours need a fallback. It lives in the @supports block below rather than as a
-  duplicate declaration inside :root, because the CSS minifier treats a
-  declaration overridden later in the same rule as dead and strips it. A
-  duplicate pair survives in source and vanishes from the build.
-
-  Four colour tokens only, per constitution Principle VI. The hairline rule is
-  derived from ink rather than being a fifth palette entry.
+  Four colour tokens. Red and blue carry a structural meaning, recorded on each,
+  as Principle VI requires of any colour beyond ink and paper.
 */
+
+@font-face {
+  font-family: "Jost";
+  src: url("/fonts/jost-latin.woff2") format("woff2-variations");
+  font-weight: 400 600;
+  font-display: swap;
+}
 
 :root {
   color-scheme: light dark;
 
-  /* Colour */
-  --colour-paper: light-dark(#faf9f7, #121416);
-  --colour-ink: light-dark(#17191b, #e9e7e3);
-  --colour-secondary: light-dark(#55595f, #9aa0a7);
-  --colour-accent: light-dark(#8f1d16, #f0938a);
+  --colour-paper: light-dark(#f6f4ef, #121212);
+  --colour-ink: light-dark(#141414, #ededea);
+  /* The bar and the square */
+  --colour-red: light-dark(#d02a1e, #f2604f);
+  /* The circle and the map pin */
+  --colour-blue: light-dark(#1c4e9c, #7aa6e8);
 
-  /* Derived, not a palette entry */
-  --colour-rule: color-mix(in srgb, var(--colour-ink) 16%, transparent);
-
-  /* Type: one family, two weights, four sizes */
+  /*
+    One family. The fallbacks are geometric faces close to Jost in proportion,
+    so a swap changes little; the font is preloaded and 9.7KB, and measured
+    Cumulative Layout Shift is 0.
+  */
   --font-sans:
-    system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial,
-    sans-serif;
-  --weight-regular: 400;
-  --weight-medium: 600;
-  --text-sm: 0.875rem;
-  --text-base: 1.0625rem;
-  --text-lg: 1.3125rem;
-  --text-xl: clamp(1.75rem, 1.25rem + 2.5vw, 2.5rem);
-  --leading-tight: 1.15;
-  --leading-body: 1.6;
+    "Jost", Futura, "Avenir Next", "Century Gothic", system-ui, sans-serif;
+  --weight-medium: 500;
+  --text-base: 1.125rem;
+  --text-lg: 1.25rem;
+  --text-xl: clamp(2.25rem, 5.5vw, 4rem);
+  --leading-tight: 1;
+  --leading-body: 1.55;
+  --tracking-tight: -0.025em;
 
-  /* Space: one base unit of 0.25rem, everything a multiple */
-  --space-1: 0.25rem;
-  --space-2: 0.5rem;
-  --space-3: 1rem;
-  --space-4: 1.5rem;
+  /* One base unit of 0.5rem, everything a multiple */
+  --space-1: 0.5rem;
+  --space-2: 1rem;
+  --space-3: 1.5rem;
+  --space-4: 2rem;
   --space-5: 2.5rem;
-  --space-6: 4rem;
-  --space-7: 6.5rem;
+  --space-6: 3.5rem;
+  --space-7: 6rem;
 
-  /* Measure, within the 60 to 75 character band */
-  --measure: 68ch;
-  /* A single sentence should not run the full measure */
-  --measure-short: 38ch;
+  --content-max: 64rem;
+  --measure: 56ch;
+  --bar-width: 20rem;
+  --bar-height: 0.625rem;
+  --photo-width: 16rem;
 
-  /* Optical tightening for display sizes, and the hairline weight */
-  --tracking-tight: -0.02em;
-  --rule-width: 1px;
-
-  /* Portrait width. 17rem at 2x is 544px, close to the 571px source crop. */
-  --photo-width: 17rem;
+  /*
+    Both marks share a box, so the text after them starts on a common left edge
+    and the pair reads as one device rather than two.
+  */
+  --mark-width: 0.72em;
+  --mark-gap: 0.34em;
 
   /* Well under the 150ms Principle VI allows for link and focus states */
   --transition-fast: 120ms;
 }
 
 /*
-  Fallback for browsers without light-dark(). Same specificity as :root and later
-  in source order, so it wins where it applies. Verified to survive minification,
-  unlike a duplicate declaration. Values match the light branch above; keep the
-  two in step. --colour-rule derives from --colour-ink, so it recovers here too.
+  Fallback for browsers without light-dark(), which is Baseline newly available
+  rather than widely available. It lives in a feature query, not as a duplicate
+  declaration inside :root, because the minifier treats a declaration overridden
+  later in the same rule as dead and strips it: a duplicate pair survives in
+  source and vanishes from the build. Values match the light branch above.
 */
 @supports not (color: light-dark(#000, #fff)) {
   :root {
-    --colour-paper: #faf9f7;
-    --colour-ink: #17191b;
-    --colour-secondary: #55595f;
-    --colour-accent: #8f1d16;
+    --colour-paper: #f6f4ef;
+    --colour-ink: #141414;
+    --colour-red: #d02a1e;
+    --colour-blue: #1c4e9c;
   }
 }
 
-/* Reset */
 *,
 *::before,
 *::after {
@@ -85,18 +87,13 @@
 
 body,
 h1,
-h2,
-h3,
 p,
-ul,
-ol,
-figure {
+ul {
   margin: 0;
-  padding: 0;
 }
 
-ul,
-ol {
+ul {
+  padding: 0;
   list-style: none;
 }
 
@@ -106,48 +103,46 @@ html {
 }
 
 img,
-picture,
-svg {
+picture {
   display: block;
   max-width: 100%;
 }
 
 a {
-  color: var(--colour-accent);
-  /* Underlined, so links are distinguishable without relying on colour alone. */
+  color: var(--colour-ink);
+  /* Underlined, so links do not depend on colour alone to be recognised */
   text-decoration-line: underline;
-  text-decoration-thickness: var(--rule-width);
-  text-underline-offset: 0.2em;
+  text-decoration-color: var(--colour-red);
+  text-decoration-thickness: 2px;
+  text-underline-offset: 0.25em;
   transition: color var(--transition-fast) ease;
 }
 
+a:hover {
+  color: var(--colour-red);
+}
+
 :focus-visible {
-  outline: 2px solid var(--colour-accent);
+  outline: 2px solid var(--colour-blue);
   outline-offset: 3px;
 }
 
-/*
-  Removed from view but not from the accessibility tree. Used to tell screen
-  reader and braille users that a link opens in a new tab, which sighted users
-  learn from the browser itself. Principle VI rules out an icon for this.
-*/
+/* The only motion on the page, so the only thing to switch off */
+@media (prefers-reduced-motion: reduce) {
+  a {
+    transition: none;
+  }
+}
+
+/* Kept in the accessibility tree, out of view: warns that a link opens a new tab */
 .visually-hidden {
   position: absolute;
   width: 1px;
   height: 1px;
   margin: -1px;
-  padding: 0;
   overflow: hidden;
   clip-path: inset(50%);
   white-space: nowrap;
-  border: 0;
-}
-
-/* The only motion on the page, so the only thing there is to switch off. */
-@media (prefers-reduced-motion: reduce) {
-  a {
-    transition: none;
-  }
 }
 
 body {
@@ -155,7 +150,5 @@ body {
   color: var(--colour-ink);
   font-family: var(--font-sans);
   font-size: var(--text-base);
-  font-weight: var(--weight-regular);
   line-height: var(--leading-body);
-  -webkit-font-smoothing: antialiased;
 }

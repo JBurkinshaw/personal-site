@@ -2,6 +2,32 @@
 SYNC IMPACT REPORT
 ==================
 
+--- Amendment 1.0.1 -> 1.1.0 (2026-09-10) ---
+MINOR: Principle VI materially expanded. No principle added, removed or redefined.
+
+Modified section: Principle VI, Restraint Is The Design.
+  Was: one prose paragraph requiring "one typeface ... a near-monochrome palette, and hairline
+  rules rather than boxes and shadows".
+  Now: six labelled clauses covering type, colour, form, marks, both appearances, and motion.
+  Colour is capped at six tokens, with anything beyond ink, paper and one secondary required to
+  carry a stated structural meaning. Geometric primitives are admitted as structure. A graphic
+  mark is admitted only where it does a job text alone cannot.
+
+Retained unchanged: the prohibition on shadows, gradients, blurs, background patterns, decorative
+icons and emoji as interface; the one-sentence defensibility test; the token requirement; the
+light and dark clause; the motion clause.
+
+Rationale: the site adopted a Bauhaus-derived design in which colour is tied to form, after
+Kandinsky's circle-to-blue and square-to-red mapping, and in which a location pin links to a map.
+The previous wording forbade both, so it described a design the project no longer has. Amending
+the principle is the honest route; leaving it and recording two departures would have made the
+principle decorative.
+
+Invalidated by this amendment: nothing in code. plan.md's Constitution Check row for Principle VI
+should be re-verified against the new clauses once the design ships.
+
+Principles: unchanged, all seven intact.
+
 --- Amendment 1.0.0 -> 1.0.1 (2026-09-02) ---
 PATCH: wording clarification, no principle added, removed or redefined.
 
@@ -101,15 +127,33 @@ publish a broken page. Adding one more of an existing thing MUST be a data edit,
 ### VI. Restraint Is The Design
 
 The aesthetic is modernist information design: clarity, hierarchy, and negative space, not
-decoration. This means one typeface, few weights, few sizes, one documented spacing scale, a
-near-monochrome palette, and hairline rules rather than boxes and shadows. Light and dark MUST both
-be first-class. Every visual element MUST be defensible in one sentence as serving legibility,
-hierarchy, or navigation; an element justified by looking impressive MUST be removed. All values
-MUST come from shared design tokens, so a raw colour or spacing literal in a component is a defect.
-Motion is the exception rather than the default, and reduced-motion preferences MUST be honoured.
+decoration.
+
+- **Type.** Exactly one family, self-hosted, with few weights and few sizes from one documented
+  scale, and one documented spacing scale.
+- **Colour.** At most six tokens. Ink, paper and one secondary need no justification. Any colour
+  beyond those three MUST carry a stated structural meaning recorded alongside the token, and MUST
+  NOT be applied for variety.
+- **Form.** Geometric primitives, a circle, a square, a bar, a hairline rule, MAY be used as
+  structure. Boxes, shadows, gradients, blurs, background patterns, decorative icons and emoji as
+  interface MUST NOT.
+- **Marks.** A graphic mark is permitted only where it does a job the text alone cannot, such as
+  signalling that a place name opens a map. A mark that merely accompanies text is ornament and MUST
+  be removed.
+- **Both appearances.** Light and dark MUST both be first-class, neither a degraded version of the
+  other.
+- **Motion.** The exception rather than the default, and reduced-motion preferences MUST be
+  honoured.
+
+Every visual element MUST be defensible in one sentence as serving legibility, hierarchy, or
+navigation; an element justified by looking impressive MUST be removed. All values MUST come from
+shared design tokens, so a raw colour or spacing literal in a component is a defect.
 
 **Rationale:** Aiming at modern-but-timeless means borrowing from design that has already lasted
-sixty years rather than from whatever currently looks new.
+sixty years rather than from whatever currently looks new. The colour and form clauses are written
+to admit that lineage rather than a diluted version of it: the Bauhaus tied colour to form, and a
+rule that permitted only monochrome would have ruled out the tradition the site is drawing on while
+still admitting any amount of tasteful greyness.
 
 ### VII. Quality Is Measured, Not Asserted
 
@@ -159,4 +203,4 @@ single reviewer, the automated gates required by Principle VII are the enforceme
 MUST NOT be disabled to unblock work. Numeric budgets and the ordered manual cutover steps are
 planning-level detail: they belong in the feature spec, plan and task list, not in this document.
 
-**Version**: 1.0.1 | **Ratified**: 2026-09-01 | **Last Amended**: 2026-09-02
+**Version**: 1.1.0 | **Ratified**: 2026-09-01 | **Last Amended**: 2026-09-10

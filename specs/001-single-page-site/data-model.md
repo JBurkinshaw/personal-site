@@ -19,7 +19,6 @@ Exactly one exists. The single subject of the site.
 | Field | Type | Stage | Rules |
 |---|---|---|---|
 | `name` | string | S1 | Non-empty, trimmed. Rendered as the page's only `<h1>` (FR-003). |
-| `provisional` | boolean | S1 | When true, the page renders its interim state per FR-021. Removed at Stage 3, not merely set false, so it cannot be forgotten. |
 | `role` | string | S3 | Non-empty. Profession, per FR-003 and SC-001. |
 | `location` | string | S3 | Non-empty. Per FR-003 and SC-001. |
 | `bio` | Markdown body | S3 | The file body rather than a frontmatter field, so it can be written as prose across a few lines. |
@@ -28,16 +27,15 @@ Exactly one exists. The single subject of the site.
 
 **Validation rules**
 
-- `name` is required from Stage 1. Every other field arrives with its stage.
+- Every field is required except `description`. Fields arrived with their stage; all are now present.
 - No field may be an empty string. An empty string is a more likely mistake than a deliberate blank,
   and silently renders as missing content.
 - `photoAlt` must be present whenever `photo` is. Neither is optional at Stage 3.
 
 **State transitions**
 
-One, and it is one-way. `provisional: true` at Stage 1 becomes the key's removal at Stage 3, when
-`role`, `location`, `bio`, `photo` and `photoAlt` all become required simultaneously. There is no
-partially-real state: the page is either the declared interim one or the finished one.
+None. An earlier `provisional` flag switched the page between an interim and a finished state; it
+was removed at Stage 3 rather than set false, and the schema now rejects it. There is one state.
 
 ---
 
@@ -75,14 +73,17 @@ Exactly one exists. What the page tells search engines and messaging apps about 
 
 | Field | Type | Stage | Rules |
 |---|---|---|---|
-| `title` | string | S1 | Non-empty. Used for `<title>` and `og:title`. |
-| `description` | string | S1 | Non-empty, and at most 160 characters so search engines do not truncate it mid-sentence. Used for the meta description and `og:description`. |
+| `title` | derived | S1 | Not a field. Equals `Profile.name`, since a separate one would only duplicate it. |
+| `description` | string | S1 | Optional. Defaults to `role` in `location`, which is all it ever said. At most 160 characters whether written or derived. |
 | `previewImage` | image reference | S2 | The share-preview image. Separate from `photo`, because the two have different aspect ratio needs. |
 
 **Validation rules**
 
 - The canonical URL is not a content field. It derives from `site` in `astro.config.mjs`, so it
   cannot drift from the deployed address or be typed wrongly by hand.
+- Neither `title` nor the map URL is stored. `title` equals `name`, and the map URL is `location`
+  encoded into Google's documented Maps URLs form. Both were fields once, and both only ever held a
+  value derivable from another, which is a second source of truth waiting to drift.
 - `description` doubles as both the meta description and the Open Graph description. Splitting them
   was rejected: two fields the owner must keep in sync is a worse failure mode than one field that
   serves both adequately.

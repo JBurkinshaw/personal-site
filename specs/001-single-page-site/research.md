@@ -215,11 +215,37 @@ amended FR-021.
 
 ---
 
+## 8. Typeface
+
+**Decision**: Jost\*, one family, self-hosted as a Latin subset variable `woff2` at 9.7KB,
+preloaded, with a geometric fallback stack.
+
+**Rationale**: The design adopted is Bauhaus-derived, and Jost\* is an open interpretation of
+Futura, the face most associated with that lineage. It is the single strongest signal available
+without licensing a commercial revival. One family only, so Principle VI's type clause holds
+without the two-typeface amendment that was discussed and turned out not to be needed.
+
+**Fallback, and why it is a stack rather than a computed override**: `research.md` section 1's
+sibling requirement is a metric-matched fallback. `fontTools` is not installed here, so the real
+`sxHeight` and `unitsPerEm` could not be read, and inventing a `size-adjust` number that cannot be
+verified would be worse than not declaring one. Instead the fallback is a stack of geometric faces
+with proportions close to Jost\*, being Futura, Avenir Next and Century Gothic, at least one of
+which is present on most desktop systems. The claim was then tested rather than asserted:
+**Lighthouse reports Cumulative Layout Shift of 0** on the built page, which is the outcome the
+requirement exists to protect. If a future change introduces shift, compute the override properly
+with `fontTools` at that point.
+
+**Alternatives considered**: Archivo and Inter are better neo-grotesques but belong to the Swiss
+strand rather than the Bauhaus one, and were used in the discarded prototypes. Loading Futura
+itself was rejected on licensing. Keeping the system stack was rejected because it is what made the
+previous design read as unstyled defaults.
+
 ## Sources
 
 - [withastro/action `action.yml`](https://github.com/withastro/action/blob/main/action.yml)
 - [withastro/action latest release](https://github.com/withastro/action/releases/latest)
 - [astro on npm](https://registry.npmjs.org/astro/latest)
+- [Jost\* by indestructible type](https://indestructibletype.com/Jost.html)
 - [MDN: `light-dark()`](https://developer.mozilla.org/en-US/docs/Web/CSS/color_value/light-dark)
 - [Astro configuration reference: `build.inlineStylesheets`](https://docs.astro.build/en/reference/configuration-reference/)
 - [Astro Zod API reference (`astro/zod`)](https://docs.astro.build/en/reference/modules/astro-zod/)

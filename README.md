@@ -14,13 +14,15 @@ frontmatter, and the bio as the prose underneath it. Edit that file in your edit
 in the browser on GitHub, commit to `main`, and the site redeploys within a few
 minutes.
 
-| Field                  | What it changes                                        |
-| ---------------------- | ------------------------------------------------------ |
-| `name`                 | The heading                                            |
-| `title`, `description` | Browser tab and link previews, `description` max 160   |
-| `role`, `location`     | The two lines under the heading                        |
-| `photo`, `photoAlt`    | Portrait filename, and what the picture shows          |
-| `links`                | Label and `https` URL pairs, shown in the listed order |
+| Field               | What it changes                                        |
+| ------------------- | ------------------------------------------------------ |
+| `name`              | The heading, the page title and link previews          |
+| `role`, `location`  | The two marked lines, and the meta description         |
+| `photo`, `photoAlt` | Portrait filename, and what the picture shows          |
+| `links`             | Label and `https` URL pairs, shown in the listed order |
+
+The meta description defaults to `role` in `location`. Add a `description` field
+only if you want it to say something else; it must stay under 160 characters.
 
 To swap the portrait, put a new file in [`src/assets/`](src/assets/) and change
 `photo` to its filename. To add a link, append another `label` and `url` pair.
@@ -32,12 +34,13 @@ was. The Actions tab names the offending field.
 
 [Astro](https://astro.build) 7, building static HTML with no client-side JavaScript.
 TypeScript in strict mode. Vanilla CSS: scoped styles per component plus one token
-sheet in [`src/styles/global.css`](src/styles/global.css). Content is Markdown
+sheet in [`src/styles/global.css`](src/styles/global.css). One self-hosted typeface,
+[Jost\*](https://indestructibletype.com/Jost.html), as a 9.7KB Latin subset. Content is Markdown
 frontmatter validated at build time with Zod, so a bad edit fails the build rather
 than publishing. Deployed to GitHub Pages by GitHub Actions on every push to `main`.
 
-Requires Node 22.23.2, per `.nvmrc`. No framework, no CSS library, no web fonts, no
-analytics, and no requests to any third-party origin.
+Requires Node 22.23.2, per `.nvmrc`. No framework, no CSS library, no analytics, and
+no requests to any third-party origin.
 
 ## Locally
 

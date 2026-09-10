@@ -1,17 +1,20 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" role="img" aria-label="Joe Burkinshaw">
   <!--
-    Colours duplicate the ink and paper tokens from src/styles/global.css.
+    The square and circle the page itself uses. The square takes red per the
+    form-to-colour mapping; the circle is paper, not blue, because blue on red
+    measures 1.5:1 and would be mud at 16px.
+
     An external SVG cannot read the document's custom properties, so this is the
     one place the palette is repeated. Keep the two in step.
   -->
   <style>
-    .ground { fill: #17191b; }
-    .figure { fill: #faf9f7; }
+    .square { fill: #d02a1e; }
+    .circle { fill: #f6f4ef; }
     @media (prefers-color-scheme: dark) {
-      .ground { fill: #e9e7e3; }
-      .figure { fill: #121416; }
+      .square { fill: #f2604f; }
+      .circle { fill: #121212; }
     }
   </style>
-  <rect class="ground" width="32" height="32" />
-  <circle class="figure" cx="16" cy="16" r="7" />
+  <rect class="square" width="32" height="32" />
+  <circle class="circle" cx="16" cy="16" r="7" />
 </svg>

@@ -110,26 +110,35 @@ for (const image of images) {
   share card, are never requested by a visitor and are excluded.
 */
 const referenced = new Set();
-for (const match of htmlText.matchAll(/(?:src|srcset)="([^"]+)"/g)) {
-  for (const candidate of match[1].split(",")) {
-    const url = candidate.trim().split(/\s+/)[0];
-    if (url.startsWith("/")) referenced.add(join(DIST, url));
+const REFERENCE_PATTERNS = [
+  /(?:src|srcset)="([^"]+)"/g,
+  /<link\b[^>]*?\bhref="([^"]+)"/g,
+];
+for (const pattern of REFERENCE_PATTERNS) {
+  for (const match of htmlText.matchAll(pattern)) {
+    for (const candidate of match[1].split(",")) {
+      const url = candidate.trim().split(/\s+/)[0];
+      if (url.startsWith("/")) referenced.add(join(DIST, url));
+    }
   }
 }
 
 const groups = new Map();
-let missingRefs = 0;
+const missing = [];
+let otherBytes = 0;
 for (const path of referenced) {
   const file = byPath.get(path);
   if (!file) {
-    missingRefs += 1;
+    missing.push(path);
     continue;
   }
-  if (!IMAGE_EXT.has(extname(path))) continue;
-  const identity = path.replace(/_[^_.]+\.[a-z0-9]+$/i, "");
-  const group = groups.get(identity) ?? [];
-  group.push(file);
-  groups.set(identity, group);
+  if (IMAGE_EXT.has(extname(path))) {
+    const identity = path.replace(/_[^_.]+\.[a-z0-9]+$/i, "");
+    groups.set(identity, [...(groups.get(identity) ?? []), file]);
+  } else {
+    /* Fonts and anything else fetched once, with no variants to choose between */
+    otherBytes += file.bytes;
+  }
 }
 
 let imageWeight = 0;
@@ -141,14 +150,23 @@ for (const [, variants] of groups) {
   imageWeight += Math.max(...considered.map((v) => v.bytes));
 }
 
-const faviconBytes = files
-  .filter((f) => f.path.includes("favicon"))
-  .reduce((sum, f) => sum + f.bytes, 0);
-const pageWeight = markupBytes + imageWeight + faviconBytes;
+const pageWeight = markupBytes + imageWeight + otherBytes;
 
 if (pageWeight > LIMITS.pageWeightBytes) {
   failures.push(
     `page weight is ${kb(pageWeight)}, budget is ${kb(LIMITS.pageWeightBytes)}`,
+  );
+}
+
+/*
+  Anything the page references must exist. A preload or an image pointing at a
+  path that is not in the output is a 404 in production and nothing else here
+  would notice: the byte sums simply count it as zero.
+*/
+if (missing.length > 0) {
+  failures.push(
+    "the page references files that are not in the build:\n" +
+      missing.map((path) => `    ${path}`).join("\n"),
   );
 }
 
@@ -172,8 +190,8 @@ if (artefactBytes > LIMITS.artefactBytes) {
 const COLOUR_TOKENS = [
   "--colour-paper",
   "--colour-ink",
-  "--colour-secondary",
-  "--colour-accent",
+  "--colour-red",
+  "--colour-blue",
 ];
 const styleText = files
   .filter((f) => MARKUP_EXT.has(extname(f.path)))
@@ -267,7 +285,7 @@ console.log(
   `  HTML + CSS    ${kb(markupBytes)} (budget ${kb(LIMITS.markupBytes)})`,
 );
 console.log(
-  `  Page weight   ${kb(pageWeight)} (budget ${kb(LIMITS.pageWeightBytes)}), markup plus ${groups.size} image(s) plus favicon`,
+  `  Page weight   ${kb(pageWeight)} (budget ${kb(LIMITS.pageWeightBytes)}), markup plus ${groups.size} image(s) plus ${kb(otherBytes)} of other fetched files`,
 );
 console.log(
   `  Artefacts     ${kb(artefactBytes)} (budget ${kb(LIMITS.artefactBytes)}), ${files.length} files including crawler and fallback assets`,
@@ -281,11 +299,6 @@ console.log(
 console.log(
   `  Third-party   ${external.length} external origin references (budget 0)`,
 );
-if (missingRefs > 0) {
-  console.log(
-    `  Note          ${missingRefs} referenced path(s) not found in ${DIST}/`,
-  );
-}
 
 if (failures.length > 0) {
   console.error("\ncheck-budgets: FAILED");

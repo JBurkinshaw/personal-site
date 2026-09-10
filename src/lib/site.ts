@@ -5,35 +5,27 @@ import { Content, frontmatter, rawContent } from "../data/site.md";
 /*
   Zod comes from astro/zod, a re-export of the zod Astro already depends on, so
   this costs no dependency and cannot skew from Astro's own copy.
-
-  The photo is named by filename only. Swapping it means dropping a file in
-  src/assets/ and changing one word here, with no code to touch, per FR-011.
 */
+const required = z.string().trim().min(1, "must not be empty");
+
 const siteSchema = z.object({
-  name: z.string().trim().min(1, "must not be empty"),
-  title: z.string().trim().min(1, "must not be empty"),
-  description: z
-    .string()
-    .trim()
-    .min(1, "must not be empty")
-    .max(
-      160,
-      "must be at most 160 characters so search engines do not truncate it",
-    ),
-  role: z.string().trim().min(1, "must not be empty"),
-  location: z.string().trim().min(1, "must not be empty"),
-  photo: z.string().trim().min(1, "must not be empty"),
-  photoAlt: z.string().trim().min(1, "must not be empty"),
+  name: required,
+  role: required,
+  location: required,
+  /* A filename in src/assets/, so swapping the photo touches no code */
+  photo: required,
+  photoAlt: required,
+  /* Optional: defaults to role and location, which is all it ever said */
+  description: required.optional(),
   /*
-    Array order is display order. There is no separate order field, because the
-    array already has one and a second source of truth invites disagreement.
-    Defaults to empty so removing the last link is a deletion rather than a
-    build failure.
+    Array order is display order: the array already has one, and a second source
+    of truth invites disagreement. Defaults to empty so removing the last link
+    is a deletion rather than a build failure.
   */
   links: z
     .array(
       z.object({
-        label: z.string().trim().min(1, "must not be empty"),
+        label: required,
         url: z.url({
           protocol: /^https$/,
           error:
@@ -71,11 +63,7 @@ if (!parsed.success) {
 
 const data = parsed.data;
 
-/*
-  "Photo of Joe Burkinshaw" describes nothing to someone who cannot see it, so
-  alternative text that merely repeats the name is rejected rather than allowed
-  through (FR-002).
-*/
+/* "Joe Burkinshaw" describes nothing to someone who cannot see the image */
 if (data.photoAlt.trim().toLowerCase() === data.name.trim().toLowerCase()) {
   throw new Error(
     "src/data/site.md photoAlt must describe the image, not repeat name. " +
@@ -98,7 +86,7 @@ const photoModule = images[`../assets/${data.photo}`];
 
 if (!photoModule) {
   const available = Object.keys(images)
-    .map((k) => k.replace("../assets/", ""))
+    .map((path) => path.replace("../assets/", ""))
     .join(", ");
   throw new Error(
     `src/data/site.md photo "${data.photo}" is not in src/assets/. ` +
@@ -106,24 +94,38 @@ if (!photoModule) {
   );
 }
 
-/*
-  Exported as separate entities so templates consume them distinctly, even
-  though they share one frontmatter block. See data-model.md.
-*/
 export const profile = {
   name: data.name,
   role: data.role,
   location: data.location,
+  /*
+    Derived, so editing `location` moves the map link with it and there is no
+    second field to keep in step. Google's documented Maps URLs form is used in
+    preference to a place ID, which would rot.
+  */
+  locationMapUrl:
+    "https://www.google.com/maps/search/?api=1&query=" +
+    encodeURIComponent(data.location),
   photo: photoModule.default,
   photoAlt: data.photoAlt,
   links: data.links,
 };
 
+const description = data.description ?? `${data.role} in ${data.location}.`;
+
+/* Applies whether the description was written or derived */
+if (description.length > 160) {
+  throw new Error(
+    `src/data/site.md description is ${description.length} characters. ` +
+      "Search engines truncate beyond 160, so set a shorter `description` explicitly.",
+  );
+}
+
 export const metadata = {
-  title: data.title,
-  description: data.description,
+  /* The page title is the name; a second field would only duplicate it */
+  title: data.name,
+  description,
   previewImage: "/share-preview.jpg",
 };
 
-/* The bio prose, authored as the Markdown body rather than a frontmatter field. */
 export { Content as Bio };
