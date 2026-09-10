@@ -30,7 +30,10 @@ import { Bio, profile } from "../lib/site";
         <ul class="links">
           {profile.links.map((link) => (
             <li>
-              <a href={link.url}>{link.label}</a>
+              <a href={link.url} target="_blank" rel="noopener">
+                {link.label}
+                <span class="visually-hidden">(opens in a new tab)</span>
+              </a>
             </li>
           ))}
         </ul>
